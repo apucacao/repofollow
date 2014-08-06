@@ -1,4 +1,16 @@
-This is your new Play application
-=================================
+RepoFollow
+==========
 
-This file will be packaged with your application, when using `activator dist`.
+Getting started
+---------------
+
+I assume you have Homebrew installed.
+
+1. install Scala
+`brew install scala`
+
+1. install the [Typesafe Activator](https://typesafe.com/activator) to run the app
+`brew install activator`
+
+1. start the app
+`activator run`
