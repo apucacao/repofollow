@@ -10,5 +10,9 @@ libraryDependencies ++= Seq(
   jdbc,
   anorm,
   cache,
-  ws
+  ws,
+  "org.webjars" %% "webjars-play" % "2.3.0",
+  "org.webjars" % "octicons" % "2.0.1"
 )
+
+includeFilter in (Assets, LessKeys.less) := "main.less"

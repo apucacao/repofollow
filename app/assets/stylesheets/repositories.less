@@ -1,0 +1,51 @@
+// repo(s)
+
+.repos {
+  border: 1px solid @border-color;
+}
+
+.repo {
+  padding: @padding-base;
+
+  & + & {
+    border-top: 1px solid @border-color;
+  }
+}
+
+.repo-title {
+  text-overflow: ellipsis;
+  overflow: hidden;
+
+  .octicon {
+    color: @text-secondary-color;
+  }
+}
+
+.repo-description {
+  color: @text-secondary-color;
+  font-size: @font-size-base * .8;
+}
+
+.repo-follow-status {
+  max-width: 30%;
+  text-align: right;
+}
+
+.repo-branches {
+  border-top: 1px dotted @border-color;
+  margin: @padding-base/2 0 0;
+  padding: @padding-base/4 0 0;
+  list-style: none;
+}
+
+.repo-branch {
+  padding-left: 1.3rem;
+}
+
+.repo-branch-name {
+  font-size: @font-size-base * .8;
+
+  .octicon {
+    color: @text-secondary-color;
+  }
+}

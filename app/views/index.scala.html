@@ -1,7 +1,17 @@
-@(message: String)
+@main("Welcome to Play", List("home")) {
 
-@main("Welcome to Play") {
-
-    @play20.welcome(message)
+  <main class="layout">
+    <div class="fullscreen">
+      <div class="cell">
+        <section class="splash">
+          <h1>RepoFollow</h1>
+          <h2>Keep tabs on your favorite repos</h2>
+          <a href="@routes.Application.stream()" class="btn btn-big btn-primary btn-cta">
+            <span class="octicon octicon-mark-github"></span> Sign in with Github
+          </a>
+        </section>
+      </div>
+    </div>
+  </main>
 
 }

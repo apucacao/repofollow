@@ -1,0 +1,78 @@
+// buttons
+
+.btn {
+  border-width: 1px;
+  border-style: solid;
+  border-radius: 5px;
+  padding: .3em .5em;
+  margin: 0;
+  font-size: @font-size-base * 0.8;
+  cursor: pointer;
+  text-align: center;
+
+  &:focus {
+    outline: none;
+  }
+
+  &:hover,
+  &:active {
+    text-decoration: none;
+  }
+
+  &:disabled {
+    cursor: default;
+    background-color: fade(@border-color, 20%);
+    border-color: @border-color;
+    color: fade(@text-color, 40%);
+
+    &:hover,
+    &:active {
+      color: fade(@text-color, 40%);
+      background-color: fade(@border-color, 20%);
+      border-color: @border-color;
+    }
+  }
+}
+
+.btn-big {
+  border-width: 2px;
+  font-size: @font-size-base * 1.25;
+  padding: .6em 1em;
+}
+
+.btn-tiny {
+  font-size: @font-size-base * 0.6;
+  border-width: 1px;
+}
+
+.btn-variant(@color) {
+  color: @color;
+  background-color: #fff;
+  border-color: @color;
+
+  &.btn-cta {
+    color: #fff;
+    background-color: @color;
+  }
+
+  &:focus {
+    box-shadow: 0 0 4px fade(@color, 50%);
+  }
+
+  &:hover,
+  &:active {
+    color: #fff;
+    background-color: @color;
+  }
+
+  &.btn-cta:hover,
+  &.btn-cta:active {
+    background-color: darken(@color, 5%);
+    border-color: darken(@color, 5%);
+  }
+}
+
+.btn             { .btn-variant(@neutral-color); }
+.btn-primary     { .btn-variant(@primary-color); }
+.btn-positive    { .btn-variant(@positive-color); }
+.btn-destructive { .btn-variant(@negative-color); }

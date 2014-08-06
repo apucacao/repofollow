@@ -1,0 +1,49 @@
+// simple row system
+
+.layout {
+  display: flex;
+  flex-direction: column;
+}
+
+.row {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: baseline;
+}
+
+.row-top { align-items: flex-start; }
+
+.row-middle { align-items: center; }
+
+.row-center { justify-content: center; }
+
+.row-spread { justify-content: space-between; }
+
+.fullscreen {
+  .row();
+  .row-center();
+  .row-middle();
+  min-height: 100vh;
+}
+
+.make-cell(@grow: 1; @shrink: 0; @basis: 0) {
+  flex: @grow @shrink @basis;
+  box-sizing: border-box;
+}
+
+.cell { .make-cell(); }
+
+.cell-full       { .make-cell(0; 0; 100%) }
+.cell-half       { .make-cell(0; 0;  50%) }
+.cell-two-thirds { .make-cell(0; 0;  66.666%) }
+.cell-one-third  { .make-cell(0; 0;  33.333%) }
+
+.box {
+  padding: 1rem;
+  margin-bottom: 1rem;
+  box-sizing: border-box;
+  background-color: red;
+  border: 1px solid #fff;
+}
