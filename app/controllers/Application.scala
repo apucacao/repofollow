@@ -1,24 +1,37 @@
 package controllers
 
+import org.albatross.repofollow.models._
+
 import play.api._
 import play.api.mvc._
 
-object Application extends Controller {
+import securesocial.core._
+import securesocial.core.services.RoutesService
 
-  def index = Action {
-    Ok(views.html.index())
+class Application(override implicit val env: RuntimeEnvironment[User]) extends SecureSocial[User] {
+
+  def index = UserAwareAction { implicit request =>
+    if (request.user.isDefined)
+      Redirect(routes.Application.stream())
+    else
+      Ok(views.html.index())
   }
 
-  def setup = Action {
-    Ok(views.html.setup())
+  def setup = SecuredAction { implicit request =>
+    Ok(views.html.setup(request.user))
   }
 
-  def stream = Action {
-    Ok(views.html.stream())
+  def settings = SecuredAction { implicit request =>
+    Ok(views.html.settings(request.user))
   }
 
-  def settings = Action {
-    Ok(views.html.settings())
+  def stream = SecuredAction { implicit request =>
+    Ok(views.html.stream(request.user))
   }
 
+}
+
+class CustomRoutesService extends RoutesService.Default {
+  // our login page is simply the app index
+  override def loginPageUrl(implicit req: RequestHeader): String = controllers.routes.Application.index().absoluteURL(IdentityProvider.sslEnabled)
 }

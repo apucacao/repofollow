@@ -6,7 +6,7 @@
         <section class="splash">
           <h1>RepoFollow</h1>
           <h2>Keep tabs on your favorite repos</h2>
-          <a href="@routes.Application.stream()" class="btn btn-big btn-primary btn-cta">
+          <a href="@securesocial.controllers.routes.ProviderController.authenticate("github", Some("/"))" class="btn btn-big btn-primary btn-cta">
             <span class="octicon octicon-mark-github"></span> Sign in with Github
           </a>
         </section>

@@ -1,5 +1,7 @@
+@(user: User)(implicit req: RequestHeader)
+
 @main("Setup") {
-  @header()
+  @header(user)
 
   <main class="layout">
     <header class="row">
