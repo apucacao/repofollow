@@ -11,8 +11,10 @@ import securesocial.core.services.RoutesService
 class Application(override implicit val env: RuntimeEnvironment[User]) extends SecureSocial[User] {
 
   def index = UserAwareAction { implicit request =>
+    val firstTime = request.user.map(_.watchlist.isEmpty).getOrElse(true)
+
     if (request.user.isDefined)
-      Redirect(routes.Application.stream())
+      Redirect(if (firstTime) routes.Application.setup() else routes.Application.stream())
     else
       Ok(views.html.index())
   }

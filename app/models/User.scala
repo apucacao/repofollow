@@ -13,9 +13,12 @@ case class User(
   fullName: Option[String],
   email: Option[String],
   avatarUrl: Option[String],
-  oAuth2Info: OAuth2Info)
+  oAuth2Info: OAuth2Info,
+  watchlist: Watchlist = Watchlist.empty)
 
 object User {
+  import Watchlist._
+
   // required for SecureSocial UserService
   def toBasicProfile(user: User) = BasicProfile(
     providerId = user._id.providerId,
