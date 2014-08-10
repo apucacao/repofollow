@@ -8,6 +8,8 @@ scalaVersion := "2.11.1"
 
 resolvers += Resolver.sonatypeRepo("snapshots")
 
+resolvers += "Local Maven Repository" at "file://"+Path.userHome.absolutePath+"/.m2/repository"
+
 libraryDependencies ++= Seq(
   jdbc,
   anorm,
