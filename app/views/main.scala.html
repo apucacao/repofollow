@@ -1,10 +1,10 @@
-@(title: String, bodyAttributes: List[String] = Nil)(content: Html)
+@(title: Option[String] = None, bodyAttributes: List[String] = Nil)(user: Option[User])(content: Html)
 
 <!DOCTYPE html>
 
 <html>
   <head>
-    <title>@if(title) { @title } | RepoFollow </title>
+    <title>@for(t <- title) { @t | } RepoFollow </title>
     <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
     <link rel="stylesheet" href='@routes.WebJarAssets.at(WebJarAssets.locate("octicons.css"))'>
     <link href='http://fonts.googleapis.com/css?family=PT+Sans' rel='stylesheet' type='text/css'>
@@ -12,7 +12,17 @@
   </head>
   <body @if(!bodyAttributes.isEmpty) {class="@(bodyAttributes.mkString(" "))"}>
     <div class="page">
-      @content
+      @for(u <- user) { @header(u) }
+      
+      <main class="layout">
+        @for(t <- title) {
+          <header class="row">
+            <h1 class="cell cell-two-thirds">@t</h1>
+          </header>
+        }
+
+        @content
+      </main>
     </div>
   </body>
 

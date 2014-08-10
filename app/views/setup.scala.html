@@ -1,167 +1,157 @@
 @(user: User)(implicit req: RequestHeader)
 
-@main("Setup") {
-  @header(user)
+@main(Some("Setup"))(Some(user)) {
+  <section>
+    <form class="search-form row">
+      <input type="search" name="q" placeholder="eg. jquery" autofocus>
+      <button type="submit" class="btn"><span class="octicon octicon-search"></span> Search</button>
+    </form>
+  </section>
 
-  <main class="layout">
-    <header class="row">
-      <h1 class="cell cell-two-thirds">Find interesting repositories</h1>
-    </header>
-
-    <section>
-      <form class="search-form row">
-        <input type="search" name="q" placeholder="eg. jquery" autofocus>
-        <button type="submit" class="btn"><span class="octicon octicon-search"></span> Search</button>
-      </form>
-    </section>
-
-    <section class="search-results">
-      <header><h3>Found 4 repositories on GitHub</h3></header>
-      <div class="repos">
-        <div class="repo">
-          <div class="row">
-            <div class="repo-title cell">
-              <span class="octicon octicon-repo"></span>
-              <a href="#" title="View apucacao/albatross on Github">
-                <span class="repo-owner">apucacao</span>/<span class="repo-name">albatross</span>
-              </a>
-              <div class="repo-description">A simple bookmarking app meant to be used by small groups.</div>
-            </div>
-            <div class="repo-follow-status cell">
-              <button class="btn"><span class="octicon octicon-eye"></span> Follow</button>
-            </div>
+  <section class="search-results">
+    <header><h3>Found 4 repositories on GitHub</h3></header>
+    <div class="repos">
+      <div class="repo">
+        <div class="row">
+          <div class="repo-title cell">
+            <span class="octicon octicon-repo"></span>
+            <a href="#" title="View apucacao/albatross on Github">
+              <span class="repo-owner">apucacao</span>/<span class="repo-name">albatross</span>
+            </a>
+            <div class="repo-description">A simple bookmarking app meant to be used by small groups.</div>
           </div>
-
-          <ul class="repo-branches">
-            <li class="repo-branch row">
-              <span class="repo-branch-name cell">
-                <span class="octicon octicon-git-branch"></span>
-                <a href="#" title="View apucacao/albatross at master on Github">master</a>
-              </span>
-              <span class="repo-follow-status cell">
-                <button class="btn btn-tiny"><span class="octicon octicon-eye"></span> Follow branch</button>
-              </span>
-            </li>
-            <li class="repo-branch row">
-              <span class="repo-branch-name cell">
-                <span class="octicon octicon-git-branch"></span>
-                <a href="#" title="View apucacao/albatross at 1.2.1 on Github">1.2.1</a>
-              </span>
-              <span class="repo-follow-status cell">
-                <button class="btn btn-tiny"><span class="octicon octicon-eye"></span> Follow branch</button>
-              </span>
-            </li>
-            <li class="repo-branch row">
-              <span class="repo-branch-name cell">
-                <span class="octicon octicon-git-branch"></span>
-                <a href="#" title="View apucacao/albatross at dev on Github">dev</a>
-              </span>
-              <span class="repo-follow-status cell">
-                <button class="btn btn-tiny"><span class="octicon octicon-eye"></span> Follow branch</button>
-              </span>
-            </li>
-            <li class="repo-branch row">
-              <span class="repo-branch-name cell">
-                <span class="octicon octicon-git-branch"></span>
-                <a href="#" title="View apucacao/albatross at 2.0.x on Github">2.0.x</a>
-              </span>
-              <span class="repo-follow-status cell">
-                <button class="btn btn-tiny"><span class="octicon octicon-eye"></span> Follow branch</button>
-              </span>
-            </li>
-          </ul>
-        </div>
-        <div class="repo">
-          <div class="row">
-            <div class="repo-title cell">
-              <span class="octicon octicon-repo"></span>
-              <a href="#" title="View apucacao/albatross on Github">
-                <span class="repo-owner">apucacao</span>/<span class="repo-name">albatross [busy]</span>
-              </a>
-              <div class="repo-description">A simple bookmarking app meant to be used by small groups.</div>
-            </div>
-            <div class="repo-follow-status cell">
-              <button class="btn"><span class="octicon octicon-eye"></span> Follow</button>
-            </div>
+          <div class="repo-follow-status cell">
+            <button class="btn"><span class="octicon octicon-eye"></span> Follow</button>
           </div>
-
-          <ul class="repo-branches">
-            <li class="repo-branch row">
-              <span class="repo-branch-name cell">
-                <span class="octicon octicon-git-branch"></span>
-                <a href="#" title="View apucacao/albatross at master on Github">master</a>
-              </span>
-              <span class="repo-follow-status cell">
-                <button class="btn btn-tiny"><span class="octicon octicon-eye"></span> Follow branch</button>
-              </span>
-            </li>
-            <li class="repo-branch row">
-              <span class="repo-branch-name cell">
-                <span class="octicon octicon-git-branch"></span>
-                <a href="#" title="View apucacao/albatross at 3.0 on Github">3.0</a>
-              </span>
-              <span class="repo-follow-status cell">
-                <button class="btn btn-tiny"><span class="octicon octicon-eye"></span> Follow branch</button>
-              </span>
-            </li>
-            <li class="repo-branch row">
-              <span class="repo-branch-name cell">
-                <span class="octicon octicon-git-branch"></span>
-                <a href="#" title="View apucacao/albatross at 0.0.1 on Github">0.0.1</a>
-              </span>
-              <span class="repo-follow-status cell">
-                <button class="btn btn-tiny"><span class="octicon octicon-eye"></span> Follow branch</button>
-              </span>
-            </li>
-          </ul>
         </div>
-        <div class="repo">
-          <div class="row">
-            <div class="repo-title cell">
-              <span class="octicon octicon-repo"></span>
-              <a href="#" title="View apucacao/albatross on Github">
-                <span class="repo-owner">apucacao</span>/<span class="repo-name">albatross</span>
-              </a>
-              <div class="repo-description">A simple bookmarking app meant to be used by small groups.</div>
-            </div>
-            <div class="repo-follow-status cell">
-              <button class="btn"><span class="octicon octicon-eye"></span> Follow</button>
-            </div>
-          </div>
 
-          <ul class="repo-branches">
-            <li class="repo-branch row">
-              <span class="repo-branch-name cell">
-                <span class="octicon octicon-git-branch"></span>
-                <a href="#" title="View apucacao/albatross at master on Github">master</a>
-              </span>
-              <span class="repo-follow-status cell">
-                <button class="btn btn-tiny"><span class="octicon octicon-eye"></span> Follow branch</button>
-              </span>
-            </li>
-            <li class="repo-branch row">
-              <span class="repo-branch-name cell">
-                <span class="octicon octicon-git-branch"></span>
-                <a href="#" title="View apucacao/albatross at 1.0-alpha on Github">1.0-alpha</a>
-              </span>
-              <span class="repo-follow-status cell">
-                <button class="btn btn-tiny"><span class="octicon octicon-eye"></span> Follow branch</button>
-              </span>
-            </li>
-            <li class="repo-branch row">
-              <span class="repo-branch-name cell">
-                <span class="octicon octicon-git-branch"></span>
-                <a href="#" title="View apucacao/albatross at bugfix on Github">bugfix</a>
-              </span>
-              <span class="repo-follow-status cell">
-                <button class="btn btn-tiny"><span class="octicon octicon-eye"></span> Follow branch</button>
-              </span>
-            </li>
-          </ul>
-        </div>
+        <ul class="repo-branches">
+          <li class="repo-branch row">
+            <span class="repo-branch-name cell">
+              <span class="octicon octicon-git-branch"></span>
+              <a href="#" title="View apucacao/albatross at master on Github">master</a>
+            </span>
+            <span class="repo-follow-status cell">
+              <button class="btn btn-tiny"><span class="octicon octicon-eye"></span> Follow branch</button>
+            </span>
+          </li>
+          <li class="repo-branch row">
+            <span class="repo-branch-name cell">
+              <span class="octicon octicon-git-branch"></span>
+              <a href="#" title="View apucacao/albatross at 1.2.1 on Github">1.2.1</a>
+            </span>
+            <span class="repo-follow-status cell">
+              <button class="btn btn-tiny"><span class="octicon octicon-eye"></span> Follow branch</button>
+            </span>
+          </li>
+          <li class="repo-branch row">
+            <span class="repo-branch-name cell">
+              <span class="octicon octicon-git-branch"></span>
+              <a href="#" title="View apucacao/albatross at dev on Github">dev</a>
+            </span>
+            <span class="repo-follow-status cell">
+              <button class="btn btn-tiny"><span class="octicon octicon-eye"></span> Follow branch</button>
+            </span>
+          </li>
+          <li class="repo-branch row">
+            <span class="repo-branch-name cell">
+              <span class="octicon octicon-git-branch"></span>
+              <a href="#" title="View apucacao/albatross at 2.0.x on Github">2.0.x</a>
+            </span>
+            <span class="repo-follow-status cell">
+              <button class="btn btn-tiny"><span class="octicon octicon-eye"></span> Follow branch</button>
+            </span>
+          </li>
+        </ul>
       </div>
-    </section>
+      <div class="repo">
+        <div class="row">
+          <div class="repo-title cell">
+            <span class="octicon octicon-repo"></span>
+            <a href="#" title="View apucacao/albatross on Github">
+              <span class="repo-owner">apucacao</span>/<span class="repo-name">albatross [busy]</span>
+            </a>
+            <div class="repo-description">A simple bookmarking app meant to be used by small groups.</div>
+          </div>
+          <div class="repo-follow-status cell">
+            <button class="btn"><span class="octicon octicon-eye"></span> Follow</button>
+          </div>
+        </div>
 
-  </main>
+        <ul class="repo-branches">
+          <li class="repo-branch row">
+            <span class="repo-branch-name cell">
+              <span class="octicon octicon-git-branch"></span>
+              <a href="#" title="View apucacao/albatross at master on Github">master</a>
+            </span>
+            <span class="repo-follow-status cell">
+              <button class="btn btn-tiny"><span class="octicon octicon-eye"></span> Follow branch</button>
+            </span>
+          </li>
+          <li class="repo-branch row">
+            <span class="repo-branch-name cell">
+              <span class="octicon octicon-git-branch"></span>
+              <a href="#" title="View apucacao/albatross at 3.0 on Github">3.0</a>
+            </span>
+            <span class="repo-follow-status cell">
+              <button class="btn btn-tiny"><span class="octicon octicon-eye"></span> Follow branch</button>
+            </span>
+          </li>
+          <li class="repo-branch row">
+            <span class="repo-branch-name cell">
+              <span class="octicon octicon-git-branch"></span>
+              <a href="#" title="View apucacao/albatross at 0.0.1 on Github">0.0.1</a>
+            </span>
+            <span class="repo-follow-status cell">
+              <button class="btn btn-tiny"><span class="octicon octicon-eye"></span> Follow branch</button>
+            </span>
+          </li>
+        </ul>
+      </div>
+      <div class="repo">
+        <div class="row">
+          <div class="repo-title cell">
+            <span class="octicon octicon-repo"></span>
+            <a href="#" title="View apucacao/albatross on Github">
+              <span class="repo-owner">apucacao</span>/<span class="repo-name">albatross</span>
+            </a>
+            <div class="repo-description">A simple bookmarking app meant to be used by small groups.</div>
+          </div>
+          <div class="repo-follow-status cell">
+            <button class="btn"><span class="octicon octicon-eye"></span> Follow</button>
+          </div>
+        </div>
 
+        <ul class="repo-branches">
+          <li class="repo-branch row">
+            <span class="repo-branch-name cell">
+              <span class="octicon octicon-git-branch"></span>
+              <a href="#" title="View apucacao/albatross at master on Github">master</a>
+            </span>
+            <span class="repo-follow-status cell">
+              <button class="btn btn-tiny"><span class="octicon octicon-eye"></span> Follow branch</button>
+            </span>
+          </li>
+          <li class="repo-branch row">
+            <span class="repo-branch-name cell">
+              <span class="octicon octicon-git-branch"></span>
+              <a href="#" title="View apucacao/albatross at 1.0-alpha on Github">1.0-alpha</a>
+            </span>
+            <span class="repo-follow-status cell">
+              <button class="btn btn-tiny"><span class="octicon octicon-eye"></span> Follow branch</button>
+            </span>
+          </li>
+          <li class="repo-branch row">
+            <span class="repo-branch-name cell">
+              <span class="octicon octicon-git-branch"></span>
+              <a href="#" title="View apucacao/albatross at bugfix on Github">bugfix</a>
+            </span>
+            <span class="repo-follow-status cell">
+              <button class="btn btn-tiny"><span class="octicon octicon-eye"></span> Follow branch</button>
+            </span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
 }

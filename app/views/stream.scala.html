@@ -1,12 +1,8 @@
 @(user: User)(implicit req: RequestHeader)
 
-@main("Stream") {
-  @header(user)
+@main(Some("Latest commits"))(Some(user)) {
 
-  <main class="layout">
-    <header class="row">
-      <h1>Latest commits</h1>
-    </header>
+  <section class="commits">
     <article class="commit row row-top">
       <a href="#" class="commit-authorship cell"><img src="http://placehold.it/44x44"></a>
       <div class="commit-details cell">
@@ -49,6 +45,6 @@
         </div>
       </div>
     </article>
-  </main>
+  </section>
 
 }
