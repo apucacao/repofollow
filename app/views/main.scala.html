@@ -5,6 +5,7 @@
 <html>
   <head>
     <title>@for(t <- title) { @t | } RepoFollow </title>
+    @Html(org.webjars.play.RequireJS.setup("javascripts/main"))
     <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
     <link rel="stylesheet" href='@routes.WebJarAssets.at(WebJarAssets.locate("octicons.css"))'>
     <link href='http://fonts.googleapis.com/css?family=PT+Sans' rel='stylesheet' type='text/css'>

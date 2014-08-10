@@ -20,10 +20,19 @@ libraryDependencies ++= Seq(
   "org.reactivemongo" %% "play2-reactivemongo" % "0.10.5.akka23-SNAPSHOT",
   "ws.securesocial" %% "securesocial" % "master-SNAPSHOT",
   "org.webjars" %% "webjars-play" % "2.3.0",
-  "org.webjars" % "octicons" % "2.0.1"
+  "org.webjars" % "octicons" % "2.0.1",
+  "org.webjars" % "requirejs" % "2.1.1",
+  "org.webjars" % "requirejs-domready" % "2.0.1-2",
+  "org.webjars" % "ramda" % "0.3.0",
+  "org.webjars" % "baconjs" % "0.7.18",
+  "org.webjars" % "react" % "0.11.1"
 )
 
 includeFilter in (Assets, LessKeys.less) := "main.less"
+
+ReactJsKeys.harmony := true
+
+ReactJsKeys.sourceMapInline := true
 
 TwirlKeys.templateImports += "org.albatross.repofollow.models._"
 
