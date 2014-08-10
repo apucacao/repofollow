@@ -21,7 +21,7 @@ function(_, React, Icon, Repository, StreamReactor) {
       return _.isAtom(this.state) ? (
         <section className="search-results">
           <header>
-            <h3>Found {this.state.total_count} repositorie{this.state.total_count !== 1 ? 's' : ''} on GitHub</h3>
+            <h3>Found {this.state.total_count} repositor{this.state.total_count !== 1 ? 'ies' : 'y'} on GitHub</h3>
           </header>
           <div className="repos">
             {repos(this.state.items)}
