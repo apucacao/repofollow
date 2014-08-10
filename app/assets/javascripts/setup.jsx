@@ -1,25 +1,31 @@
 /** @jsx React.DOM */
 
 define([
+  'ramda',
   'Bacon',
   'react-with-addons',
+  'lib/GitHub',
   'components/SearchForm',
-  'components/SearchResults'
+  'components/SearchResults',
+  'components/Spinner'
 ],
 
-function(Bacon, React, SearchForm, SearchResults) {
+function(_, Bacon, React, GitHub, SearchForm, SearchResults, Spinner) {
 
   'use strict';
 
-  var Setup = React.createClass({
-    render: function() {
-      return (<div className="setup">
-        <SearchForm />
-        <SearchResults />
-      </div>);
-    }
-  });
+  return (el) => {
+    var term = new Bacon.Bus();
+    var results = term.flatMapLatest(_.compose(Bacon.fromPromise, GitHub.search));
+    var requesting = term.map(true).merge(results.map(false).mapError(false)).skipDuplicates().toProperty(false).map((s) => ({ visible: s }));
 
-  return (el) => React.renderComponent(<Setup />, el);
+    React.renderComponent(
+      <div>
+        <SearchForm stream={term} />
+        <Spinner stream={requesting} />
+        <SearchResults stream={results} />
+      </div>
+    , el);
+  }
 
 });

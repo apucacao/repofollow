@@ -1,26 +1,31 @@
 /** @jsx React.DOM */
 
 define([
+  'ramda',
   'react-with-addons',
   'components/Icon',
-  'components/Repository'
+  'components/Repository',
+  'components/mixins/StreamReactor'
 ],
 
-function(React, Icon, Repository) {
+function(_, React, Icon, Repository, StreamReactor) {
 
   'use strict';
 
   return React.createClass({
+    mixins: [StreamReactor],
+
     render: function() {
-      return (
+      return _.isAtom(this.state) ? (
         <section className="search-results">
-          <header><h3>Found 4 repositories on GitHub</h3></header>
+          <header>
+            <h3>Found {this.state.total_count} repositorie{this.state.total_count !== 1 ? 's' : ''} on GitHub</h3>
+          </header>
           <div className="repos">
-            <Repository />
-            <Repository />
+            {_.map(Repository, this.state.items)}
           </div>
         </section>
-      );
+      ) : null;
     }
   });
 

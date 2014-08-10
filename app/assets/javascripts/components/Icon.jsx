@@ -10,11 +10,11 @@ function(React) {
 
   return React.createClass({
     propTypes: {
-      icon: React.PropTypes.string.isRequired
+      type: React.PropTypes.string.isRequired
     },
 
     render: function() {
-      return <span className={`octicon octicon-${this.props.icon}`} />;
+      return <span className={`octicon octicon-${this.props.type}`} />;
     }
   })
 

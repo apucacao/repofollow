@@ -16,14 +16,14 @@ function(React, Icon, Branches) {
         <div className="repo">
           <div className="row">
             <div className="repo-title cell">
-              <Icon icon="repo" />
-              <a href="#" title="View apucacao/albatross on Github">
-                <span className="repo-owner">apucacao</span>/<span className="repo-name">albatross</span>
+              <Icon type="repo" />
+              <a href={this.props.html_url} title={`View ${this.props.full_name} on Github`} target="_blank">
+                <span className="repo-owner">{this.props.owner.login}</span>/<span className="repo-name">{this.props.name}</span>
               </a>
-              <div className="repo-description">A simple bookmarking app meant to be used by small groups.</div>
+              <div className="repo-description">{this.props.description}</div>
             </div>
             <div className="repo-follow-status cell">
-              <button className="btn"><Icon icon="eye" /> Follow</button>
+              <button className="btn"><Icon type="eye" /> Follow</button>
             </div>
           </div>
 

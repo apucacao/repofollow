@@ -1,19 +1,30 @@
 /** @jsx React.DOM */
 
 define([
-  'react-with-addons'
+  'react-with-addons',
+  'components/Icon'
 ],
 
-function(React) {
+function(React, Icon) {
 
   'use strict';
 
   return React.createClass({
+    handleSubmit: function(event) {
+      var value = (this.refs.q.state.value || '').trim();
+
+      if (value) {
+        this.setState({ q: value }, () => this.props.stream.push(this.state));
+      }
+      
+      event.preventDefault();
+    },
+
     render: function() {
       return (
-        <form className="search-form row">
-          <input type="search" name="q" placeholder="eg. jquery" autofocus />
-          <button type="submit" className="btn"><span className="octicon octicon-search"></span> Search</button>
+        <form className="search-form row" onSubmit={this.handleSubmit}>
+          <input type="search" ref="q" placeholder="eg. jquery" autoFocus/>
+          <button type="submit" className="btn"><Icon type="search" /> Search</button>
         </form>
       );
     }
