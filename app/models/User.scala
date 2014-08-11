@@ -25,6 +25,9 @@ case class User(
 
   def watch(repository: Repository) =
     if (!isWatching(repository)) copy(watchlist = repository :: watchlist) else this
+
+  def unwatch(id: Long) =
+    copy(watchlist = watchlist.filter(_.id =/= id))
 }
 
 object User {

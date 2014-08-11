@@ -4,11 +4,6 @@ define([
 
 function(_, querystring) {
 
-  var defaultHeaders = {
-    'Content-Type': 'application/json',
-    'Accept': 'application/json'
-  };
-
   var request = function(method, headers, url, data) {
     return new Promise(function(resolve, reject) {
       var req = new XMLHttpRequest();
@@ -23,9 +18,9 @@ function(_, querystring) {
 
       req.open(method, url, true);
 
-      _.mapObj.idx((value, name) => req.setRequestHeader(name, value), _.mixin({}, defaultHeaders, headers));
+      _.mapObj.idx((value, name) => req.setRequestHeader(name, value), headers);
 
-      data ? req.send(data) : req.send();
+      req.send(method === 'GET' ? '' : data);
     });
   };
 
@@ -39,6 +34,10 @@ function(_, querystring) {
 
     post: function(headers, url, data) {
       return request('POST', headers, url, JSON.stringify(data));
+    },
+
+    delete: function(headers, url) {
+      return request('DELETE', headers, url);
     }
   };
 

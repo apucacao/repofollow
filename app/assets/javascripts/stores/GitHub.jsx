@@ -16,7 +16,7 @@ function(_, xhr) {
   };
 
   return {
-    search: _.lPartial(xhr.get, headers, path('/search/repositories'))
+    searchRepositories: _.lPartial(xhr.get, headers, path('/search/repositories'))
   };
 
 });

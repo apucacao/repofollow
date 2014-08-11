@@ -11,6 +11,7 @@ GET     /settings                     @controllers.Application.settings
 # API
 GET     /api/watchlist                @controllers.Api.getWatchlist
 POST    /api/watchlist                @controllers.Api.addToWatchlist
+DELETE  /api/watchlist/:id            @controllers.Api.removeFromWatchlist(id: Long)
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file                controllers.Assets.at(path="/public", file)

@@ -6,7 +6,8 @@
   <head>
     <title>@for(t <- title) { @t | } RepoFollow </title>
     @helper.javascriptRouter("jsRoutes")(
-      routes.javascript.Api.addToWatchlist
+      routes.javascript.Api.addToWatchlist,
+      routes.javascript.Api.removeFromWatchlist
     )
     @Html(org.webjars.play.RequireJS.setup("javascripts/main"))
     <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">

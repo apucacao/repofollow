@@ -20,18 +20,22 @@ class Application(override implicit val env: RuntimeEnvironment[User]) extends S
   def index = UserAwareAction { implicit request =>
     val firstTime = request.user.map(_.watchlist.isEmpty).getOrElse(true)
 
+    println(s"first time user: $firstTime")
+
     if (request.user.isDefined)
-      Redirect(if (firstTime) routes.Application.setup() else routes.Application.stream())
+      Redirect(if (firstTime) routes.Application.setup() else routes.Application.settings())
     else
       Ok(views.html.index(request))
   }
+
+  // FIXME: user.get
 
   def setup = SecuredAction.async { implicit request =>
     UserStore.findById(db, request.user._id).flatMap(user => Future(Ok(views.html.setup(user.get))))
   }
 
-  def settings = SecuredAction { implicit request =>
-    Ok(views.html.settings(request.user))
+  def settings = SecuredAction.async { implicit request =>
+    UserStore.findById(db, request.user._id).flatMap(user => Future(Ok(views.html.settings(user.get))))
   }
 
   def stream = SecuredAction { implicit request =>
