@@ -16,7 +16,7 @@ function(_, React, Icon, Repository, StreamReactor) {
     mixins: [StreamReactor],
 
     render: function() {
-      var repos = _.map((repo) => Repository(_.mixin({key: repo.id}, repo)));
+      var repos = _.map((repo) => Repository(_.mixin({key: repo.id, store: this.props.store}, repo)));
 
       return _.isAtom(this.state) ? (
         <section className="search-results">

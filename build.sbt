@@ -34,7 +34,7 @@ ReactJsKeys.harmony := true
 
 ReactJsKeys.sourceMapInline := true
 
-TwirlKeys.templateImports += "org.albatross.repofollow.models._"
+TwirlKeys.templateImports ++= Seq("org.albatross.repofollow.models._", "play.api.libs.json.Json")
 
 initialCommands := """
     import scalaz._, Scalaz._

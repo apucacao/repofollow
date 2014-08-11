@@ -1,7 +1,7 @@
 @(user: User)(implicit req: RequestHeader)
 
 @main(Some("Setup"))(Some(user)) {
-  
-  <div data-module="setup" />
-  
+
+  <div data-module="setup" data-watchlist="@(Json.toJson(user.watchlist))" />
+
 }

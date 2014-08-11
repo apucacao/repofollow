@@ -4,17 +4,20 @@ define([
   'ramda',
   'Bacon',
   'react-with-addons',
-  'lib/GitHub',
+  'stores/GitHub',
+  'stores/Watchlist',
   'components/SearchForm',
   'components/SearchResults',
   'components/Spinner'
 ],
 
-function(_, Bacon, React, GitHub, SearchForm, SearchResults, Spinner) {
+function(_, Bacon, React, GitHub, Watchlist, SearchForm, SearchResults, Spinner) {
 
   'use strict';
 
   return (el) => {
+    var watchlist = new Watchlist(JSON.parse(el.dataset.watchlist));
+
     var term = new Bacon.Bus();
     var results = term.flatMapLatest(_.compose(Bacon.fromPromise, GitHub.search));
     var requesting = term.map(true).merge(results.map(false).mapError(false)).skipDuplicates().toProperty(false).map((s) => ({ visible: s }));
@@ -23,7 +26,7 @@ function(_, Bacon, React, GitHub, SearchForm, SearchResults, Spinner) {
       <div>
         <SearchForm stream={term} />
         <Spinner stream={requesting} />
-        <SearchResults stream={results} />
+        <SearchResults stream={results} store={watchlist} />
       </div>
     , el);
   }

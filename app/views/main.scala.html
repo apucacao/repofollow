@@ -1,10 +1,13 @@
-@(title: Option[String] = None, bodyAttributes: List[String] = Nil)(user: Option[User])(content: Html)
+@(title: Option[String] = None, bodyAttributes: List[String] = Nil)(user: Option[User])(content: Html)(implicit req: RequestHeader)
 
 <!DOCTYPE html>
 
 <html>
   <head>
     <title>@for(t <- title) { @t | } RepoFollow </title>
+    @helper.javascriptRouter("jsRoutes")(
+      routes.javascript.Api.addToWatchlist
+    )
     @Html(org.webjars.play.RequireJS.setup("javascripts/main"))
     <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
     <link rel="stylesheet" href='@routes.WebJarAssets.at(WebJarAssets.locate("octicons.css"))'>
@@ -14,7 +17,7 @@
   <body @if(!bodyAttributes.isEmpty) {class="@(bodyAttributes.mkString(" "))"}>
     <div class="page">
       @for(u <- user) { @header(u) }
-      
+
       <main class="layout">
         @for(t <- title) {
           <header class="row">

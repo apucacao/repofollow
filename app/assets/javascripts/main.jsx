@@ -4,6 +4,7 @@ require(['ramda', 'requirejs-domready'], function(_, domReady) {
 
   var load = (el) => {
     var module = el.dataset.module;
+
     require([module], (m) => m(el));
   }
 

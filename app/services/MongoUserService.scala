@@ -1,8 +1,10 @@
 package org.albatross.repofollow
 package services
 
-import models.User
+import models.{UserId, User}
 import db.UserStore
+
+import scalaz._, Scalaz._
 
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -15,10 +17,24 @@ class MongoUserService extends UserService[User] {
   lazy val db = ReactiveMongoPlugin.db
 
   def find(providerId: String, userId: String): Future[Option[BasicProfile]] =
-    UserStore.findByProviderUserId(db, providerId, userId).map(_.map(User.toBasicProfile))
+    UserStore.findById(db, UserId(providerId, userId)).map(_.map(User.toBasicProfile))
 
-  def save(profile: BasicProfile, mode: SaveMode): Future[User] =
-    UserStore.save(db, User.fromBasicProfile(profile))
+  def save(profile: BasicProfile, mode: SaveMode): Future[User] = {
+    def updateFromProfile(user: User) =
+      user.copy(
+        firstName = profile.firstName,
+        lastName = profile.lastName,
+        fullName = profile.fullName,
+        email = profile.email,
+        avatarUrl = profile.avatarUrl,
+        oAuth2Info = profile.oAuth2Info.get)
+
+    for {
+      user <- UserStore.findById(db, UserId(profile.providerId, profile.userId))
+      saved <- user.cata(some = u => UserStore.save(db, updateFromProfile(u)),
+                     none = UserStore.save(db, User.fromBasicProfile(profile)))
+    } yield saved
+  }
 
   // no required
   def deleteExpiredTokens(): Unit = ???

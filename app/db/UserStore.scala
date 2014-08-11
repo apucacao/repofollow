@@ -27,11 +27,11 @@ object UserStore {
     } yield ()
   }
 
-  def first(db: DefaultDB): Future[Option[User]] = 
+  def first(db: DefaultDB): Future[Option[User]] =
     collection(db).find(Json.obj()).one[User]
 
-  def findByProviderUserId(db: DefaultDB, providerId: String, userId: String): Future[Option[User]] =
-    collection(db).find(Json.obj("providerId" -> providerId, "userId" -> userId)).one[User]
+  def findById(db: DefaultDB, userId: UserId): Future[Option[User]] =
+    collection(db).find(Json.obj("_id" -> userId)).one[User]
 
   def save(db: DefaultDB, user: User): Future[User] =
     collection(db).save(user).map(_ => user)

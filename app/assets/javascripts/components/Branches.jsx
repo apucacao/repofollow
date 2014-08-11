@@ -11,6 +11,7 @@ function(React, Icon) {
 
   return React.createClass({
     render: function() {
+      return null;
       return (
         <ul className="repo-branches">
           <li className="repo-branch row">

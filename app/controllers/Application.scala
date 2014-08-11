@@ -1,14 +1,21 @@
 package controllers
 
 import org.albatross.repofollow.models._
+import org.albatross.repofollow.db.UserStore
+
+import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
 
 import play.api._
 import play.api.mvc._
+import play.api.Play.current
+import play.modules.reactivemongo._
 
 import securesocial.core._
 import securesocial.core.services.RoutesService
 
 class Application(override implicit val env: RuntimeEnvironment[User]) extends SecureSocial[User] {
+  lazy val db = ReactiveMongoPlugin.db
 
   def index = UserAwareAction { implicit request =>
     val firstTime = request.user.map(_.watchlist.isEmpty).getOrElse(true)
@@ -16,11 +23,11 @@ class Application(override implicit val env: RuntimeEnvironment[User]) extends S
     if (request.user.isDefined)
       Redirect(if (firstTime) routes.Application.setup() else routes.Application.stream())
     else
-      Ok(views.html.index())
+      Ok(views.html.index(request))
   }
 
-  def setup = SecuredAction { implicit request =>
-    Ok(views.html.setup(request.user))
+  def setup = SecuredAction.async { implicit request =>
+    UserStore.findById(db, request.user._id).flatMap(user => Future(Ok(views.html.setup(user.get))))
   }
 
   def settings = SecuredAction { implicit request =>

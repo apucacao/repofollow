@@ -16,6 +16,7 @@ import play.api.Play.current
 import play.modules.reactivemongo._
 
 import securesocial.core._
+
 class Api(override implicit val env: RuntimeEnvironment[User]) extends SecureSocial[User] {
   lazy val db = ReactiveMongoPlugin.db
 
@@ -26,6 +27,6 @@ class Api(override implicit val env: RuntimeEnvironment[User]) extends SecureSoc
   def addToWatchlist = SecuredAction.async(jsonBody[Repository]) { implicit request =>
     val user = request.user
     val repository = request.body
-    UserStore.save(db, user.watch(repository)).map(_ => NoContent)
+    UserStore.save(db, user.watch(repository)).map(_ => Ok(Json.toJson(user.watchlist)))
   }
 }
