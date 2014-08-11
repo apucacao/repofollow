@@ -2,6 +2,10 @@
 
 @main(Some("Settings"))(Some(user)) {
 
-  <section data-module="settings" data-watchlist="@(Json.toJson(user.watchlist))" />
+  @if(user.watchlist.isEmpty) {
+    <p>You are you not following any repositories. <a href="@routes.Application.setup()" title="Setup">Find some on GitHub →</a>
+  } else {
+    <section data-module="settings" data-watchlist="@(Json.toJson(user.watchlist))" />
+  }
 
 }

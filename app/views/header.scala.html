@@ -7,7 +7,7 @@
   <nav>
     @if(user.avatarUrl.isDefined) {<img class="user-avatar" src="@(user.avatarUrl)">}
     <a href="@routes.Application.stream()" title="Home"><span class="octicon octicon-home"></span></a>
-    <a href="@routes.Application.setup()" title="Search"><span class="octicon octicon-search"></span></a>
+    <a href="@routes.Application.setup()" title="Setup"><span class="octicon octicon-search"></span></a>
     <a href="@routes.Application.settings()" title="Settings"><span class="octicon octicon-gear"></span></a>
     <a href="@securesocial.controllers.routes.LoginPage.logout()" title="Sign out"><span class="octicon octicon-sign-out"></span></a>
   </nav>
