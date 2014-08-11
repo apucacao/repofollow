@@ -16,7 +16,7 @@ function(React, Icon, Button, Branches) {
       var repo = {
         id: this.props.id,
         name: this.props.name,
-        owner: this.props.owner.login,
+        owner: this.props.owner,
         description: this.props.description,
         branches: [] // todo
       };
@@ -26,10 +26,6 @@ function(React, Icon, Button, Branches) {
 
     render: function() {
       var alreadyWatching = this.props.store.isWatching(this.props);
-
-      if (alreadyWatching) {
-        console.log('already watching', this.props.full_name);
-      }
 
       return (
         <div className="repo">
@@ -51,5 +47,4 @@ function(React, Icon, Button, Branches) {
       );
     }
   });
-// <button className="btn" onClick={this.handleClick}><Icon type="eye" /> {alreadyWatching ? 'Unfollow' : 'Follow'}</button>
 });
