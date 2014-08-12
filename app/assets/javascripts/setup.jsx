@@ -19,7 +19,7 @@ function(_, Bacon, React, GitHub, Watchlist, SearchForm, SearchResults, Spinner)
     var watchlist = new Watchlist(JSON.parse(el.dataset.watchlist));
 
     var term = new Bacon.Bus();
-    var results = term.flatMapLatest(_.compose(Bacon.fromPromise, GitHub.searchRepositories));
+    var results = term.flatMapLatest(_.compose(Bacon.fromPromise, GitHub.searchRepositoriesWithBranches));
     var requesting = term.map(true).merge(results.map(false).mapError(false)).skipDuplicates().toProperty(false).map((s) => ({ visible: s }));
 
     React.renderComponent(
