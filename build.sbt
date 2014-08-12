@@ -22,10 +22,10 @@ libraryDependencies ++= Seq(
   "org.webjars" %% "webjars-play" % "2.3.0",
   "org.webjars" % "octicons" % "2.0.1",
   "org.webjars" % "requirejs" % "2.1.1",
-  "org.webjars" % "requirejs-domready" % "2.0.1-2",
   "org.webjars" % "ramda" % "0.3.0",
   "org.webjars" % "baconjs" % "0.7.18",
-  "org.webjars" % "react" % "0.11.1"
+  "org.webjars" % "react" % "0.11.1",
+  "org.webjars" % "jquery" % "2.1.1"
 )
 
 includeFilter in (Assets, LessKeys.less) := "main.less"

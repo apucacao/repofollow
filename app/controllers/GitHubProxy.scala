@@ -19,7 +19,7 @@ object GitHubProxy extends Controller {
     val q = request.queryString.get("q").flatMap(_.headOption)
 
     q.cata(
-  		some = GitHub.searchRepositories(_).map(results => Ok(Json.toJson(results))),
+  		some = GitHub.searchRepositoriesWithBranches(_).map(results => Ok(Json.toJson(results))),
       none = Future { BadRequest }
     )
   }

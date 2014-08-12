@@ -1,44 +1,28 @@
 define([
-  'ramda'
+  'ramda',
+  'jquery'
 ],
 
-function(_, querystring) {
+function(_, $) {
 
-  var request = function(method, headers, url, data) {
-    return new Promise(function(resolve, reject) {
-      var req = new XMLHttpRequest();
+  var mimetype = 'application/json';
 
-      req.onload = function() {
-        if (req.status >= 200 && req.status < 400) {
-          resolve(JSON.parse(this.response));
-        }
-      };
+  var getJSON = function(url, data) {
+    return $.ajax({ type: 'GET', url: url, data: data, dataType: 'json' });
+  }
 
-      req.onerror = reject;
-
-      req.open(method, url, true);
-
-      _.mapObj.idx((value, name) => req.setRequestHeader(name, value), headers);
-
-      req.send(method === 'GET' ? '' : data);
-    });
+  var postJSON =  function(url, data) {
+    return $.ajax({ type: 'POST', url: url, data: JSON.stringify(data), dataType: 'json', processData: false, contentType: mimetype });
   };
 
-  var querystringify = (obj) =>
-    _.join('&')(_.zipWith((k,v) => k + '=' + encodeURIComponent(v), _.keys(obj), _.values(obj)));
+  var del = function(url) {
+    return $.ajax({ type: 'DELETE', url: url });
+  };
 
   return {
-    get: function(headers, url, data) {
-      return request('GET', headers, data ? url + '?' + querystringify(data) : url);
-    },
-
-    post: function(headers, url, data) {
-      return request('POST', headers, url, JSON.stringify(data));
-    },
-
-    delete: function(headers, url) {
-      return request('DELETE', headers, url);
-    }
+    get: _.curry(getJSON),
+    post: _.curry(postJSON),
+    'delete': del
   };
 
 });
