@@ -22,6 +22,11 @@ object GitHub {
 		"client_id" -> Play.current.configuration.getString("securesocial.github.clientId").get,
 		"client_secret" -> Play.current.configuration.getString("securesocial.github.clientSecret").get)
 
+	implicit val BranchReads: Reads[Branch] = (
+    (__ \ "commit" \ "sha").read[String] and
+    (__ \ "name").read[String]
+  )(Branch.apply _)
+
 	def url(path: String) = s"""https://api.github.com${if (path.startsWith("/")) path else ("/" + path)}"""
 
 	def params(p: (String, String)*) = (auth ++ p.toMap).toSeq
@@ -48,11 +53,7 @@ object GitHub {
   def getRepositoryBranches(repo: Repository): Future[List[Branch]] =
   	WS.url(url(s"/repos/${repo.owner.login}/${repo.name}/branches"))
       .withHeaders("Accept" -> contentType)
-      .get().map(_.json.as[List[Branch]])
-
-  implicit val BranchReads: Reads[Branch] = (
-    (__ \ "commit" \ "sha").read[String] and
-    (__ \ "name").read[String]
-  )(Branch.apply _)
+      .withQueryString(params(): _*)
+      .get().map(_.json.asOpt[List[Branch]]).map(_.getOrElse(Nil))
 
 }
