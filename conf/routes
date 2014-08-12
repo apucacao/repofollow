@@ -13,6 +13,9 @@ GET     /api/watchlist                @controllers.Api.getWatchlist
 POST    /api/watchlist                @controllers.Api.addToWatchlist
 DELETE  /api/watchlist/:id            @controllers.Api.removeFromWatchlist(id: Long)
 
+# GitHub proxy
+GET     /github/search/repositories		controllers.GitHubProxy.searchRepositories
+
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file                controllers.Assets.at(path="/public", file)
 
