@@ -34,7 +34,7 @@ function(React, Icon, Button, BranchList) {
               <Icon type="repo" />
               <a href={`http://github.com/${this.props.owner.login}/${this.props.name}`} title={`View ${this.props.owner.login}/${this.props.name} on Github`} target="_blank">
                 <span className="repo-owner">{this.props.owner.login}</span>/<span className="repo-name">{this.props.name}</span>
-              </a>{' '}{this.props.id}
+              </a>
               <div className="repo-description">{this.props.description}</div>
             </div>
             <div className="repo-follow-status cell">
