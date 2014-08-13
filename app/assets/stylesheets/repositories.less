@@ -34,13 +34,19 @@
 
 .repo-branches {
   border-top: 1px dotted @border-color;
+  -webkit-columns: 2;
+  -moz-columns: 2;
   margin: @padding-base/2 0 0;
   padding: @padding-base/4 0 0;
   list-style: none;
 }
 
 .repo-branch {
-  padding-left: 1.3rem;
+  padding: 0 0 @padding-base/4 1.3rem;
+
+  input[type="checkbox"] {
+    margin: 0 .75rem 0 0;
+  }
 }
 
 .repo-branch-name {
@@ -48,6 +54,6 @@
 
   .octicon {
     color: @text-secondary-color;
-    padding-right: .35em;
+    padding-right: .25rem;
   }
 }
