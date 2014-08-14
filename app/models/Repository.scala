@@ -19,14 +19,7 @@ case class Repository(
   name: String,
   owner: RepositoryOwner,
   description: Option[String] = None,
-  branches: List[Branch] = Nil) {
-
-  lazy val fullName = s"$name/${owner.login}"
-
-  def hasBranch(branch: Branch) = branches.exists(_.sha === branch.sha)
-
-  def branchShas = branches.map(_.sha)
-}
+  branches: List[Branch] = Nil)
 
 object Repository {
   implicit val RepositoryOwnerFormat = Json.format[RepositoryOwner]
