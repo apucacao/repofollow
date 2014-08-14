@@ -25,6 +25,7 @@ function(_, Bacon, React, Watchlist, SearchForm, SearchResults) {
     render: function() {
       return (
         <div>
+          <p>Find repos. Follow the ones you want to keep tabs on.</p>
           <SearchForm handleSearch={this.onSearch} />
           <SearchResults q={this.state.q} />
         </div>
