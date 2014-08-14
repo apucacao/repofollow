@@ -3,10 +3,11 @@
 define([
   'react-with-addons',
   'components/Icon',
-  'components/Button'
+  'components/Button',
+  'stores/Watchlist'
 ],
 
-function(React, Icon, Button) {
+function(React, Icon, Button, Watchlist) {
 
   'use strict';
 
@@ -18,9 +19,11 @@ function(React, Icon, Button) {
     },
 
   	render: function() {
+      var checked = this.props.name === 'master' || Watchlist.isWatchingBranch(this.props.sha);
+
   		return (
   			<li className="repo-branch">
-          <input type="checkbox" name="branches" value={this.props.sha} />
+          <input type="checkbox" name="branches" value={this.props.sha} defaultChecked={checked} />
           <span className="repo-branch-name">
             <Icon type="git-branch" />
             <a href={`http://github.com/${this.props.repo.owner.login}/${this.props.repo.name}/commits/${this.props.sha}`} title={`View ${this.props.repo.owner.login}/${this.props.repo.name} at ${this.props.name} on Github`}>{this.props.name}</a>
