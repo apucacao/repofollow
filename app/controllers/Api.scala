@@ -26,19 +26,19 @@ class Api(override implicit val env: RuntimeEnvironment[User]) extends SecureSoc
 
   // FIXME: user.get
 
-  def addToWatchlist = SecuredAction.async(jsonBody[Repository]) { implicit request =>
+  def updateWatchlistItem(id: Long) = SecuredAction.async(jsonBody[Repository]) { implicit request =>
     val repository = request.body
 
     for {
       user    <- UserStore.findById(db, request.user._id)
-      updated <- UserStore.save(db, user.get.watch(repository))
+      updated <- UserStore.save(db, user.get.saveToWatchlist(repository))
     } yield Ok(Json.toJson(updated.watchlist))
   }
 
-  def removeFromWatchlist(id: Long) = SecuredAction.async { implicit request =>
+  def removeWatchlistItem(id: Long) = SecuredAction.async { implicit request =>
     for {
       user    <- UserStore.findById(db, request.user._id)
-      updated <- UserStore.save(db, user.get.unwatch(id))
+      updated <- UserStore.save(db, user.get.removeFromWatchlist(id))
     } yield Ok(Json.toJson(updated.watchlist))
   }
 }

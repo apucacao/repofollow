@@ -11,13 +11,21 @@ function(_, React, Branch) {
   'use strict';
 
   return React.createClass({
-    render: function() {
-      var children = _.map((branch) => Branch(_.mixin({key: branch.sha, repo: this.props.repo}, branch)));
+    propTypes: {
+      branches: React.PropTypes.arrayOf(React.PropTypes.object).isRequired
+    },
 
+    handleChange: function(event) {
+      this.props.onChange({ sha: event.target.value, selected: event.target.checked });
+    },
+
+    render: function() {
       return (
-        <ul className="repo-branches">
-          {children(this.props.repo.branches)}
-        </ul>
+        <div className="repo-branches">
+          <form>
+          {_.map((branch) => Branch(_.mixin({ key: branch.sha, repo: this.props.repo }, branch)), this.props.branches)}
+          </form>
+        </div>
       );
     }
   });

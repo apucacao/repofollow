@@ -6,7 +6,9 @@ define([
 function(_, xhr) {
 
   return {
-    searchRepositoriesWithBranches: xhr.get(jsRoutes.controllers.GitHubProxy.searchRepositories().url)
+    searchRepositoriesWithBranches: function(q) {
+    	return xhr.get(jsRoutes.controllers.GitHubProxy.searchRepositories().url, {q : q });
+    }
   };
 
 });

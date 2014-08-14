@@ -18,16 +18,15 @@ case class User(
   email: Option[String],
   avatarUrl: Option[String],
   oAuth2Info: OAuth2Info,
-  watchlist: List[Repository] = Nil) {
+  watchlist: Watchlist) {
 
-  def isWatching(repository: Repository) =
-    watchlist.find(_.id === repository.id).map(_.branchShas === repository.branchShas).getOrElse(false)
+  def isWatching(repo: Repository) = watchlist.contains(repo)
 
-  def watch(repository: Repository) =
-    if (!isWatching(repository)) copy(watchlist = repository :: watchlist) else this
+  def isNotWatchingAnything = watchlist.isEmpty
 
-  def unwatch(id: Long) =
-    copy(watchlist = watchlist.filter(_.id =/= id))
+  def saveToWatchlist(repo: Repository) = copy(watchlist = watchlist.put(repo))
+
+  def removeFromWatchlist(id: Long) = copy(watchlist = watchlist.drop(id))
 }
 
 object User {
@@ -52,7 +51,8 @@ object User {
     profile.fullName,
     profile.email,
     profile.avatarUrl,
-    profile.oAuth2Info.get) // since we're using Github we must have OAuth2 details
+    profile.oAuth2Info.get, // since we're using Github we must have OAuth2 details
+    Watchlist())
 
   implicit val OAuth1InfoFormat = Json.format[OAuth1Info]
   implicit val OAuth2InfoFormat = Json.format[OAuth2Info]

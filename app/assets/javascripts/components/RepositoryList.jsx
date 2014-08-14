@@ -11,14 +11,14 @@ function(_, React, Repository) {
   'use strict';
 
   return React.createClass({
-    render: function() {
-      var groups = _.groupBy(this.props.store.isWatching)(this.props.items);
-      var children = _.map((repo) => Repository(_.mixin({key: repo.id, store: this.props.store}, repo)));
+    propTypes: {
+      items: React.PropTypes.arrayOf(React.PropTypes.object).isRequired
+    },
 
+    render: function() {
       return (
         <div className="repos">
-          {children(groups[true] || [])}
-          {children(groups[false] || [])}
+          {_.map((repo) => Repository(_.mixin({ key: repo.id }, repo)), this.props.items)}
         </div>
       );
     }

@@ -1,18 +1,43 @@
+/** @jsx React.DOM */
+
 require([
 	'ramda',
-	'jquery'
+	'jquery',
+	'react-with-addons'
 ],
 
-function(_, $) {
+function(_, $, React) {
 
   'use strict';
 
-  var load = function(el) {
-    var module = el.dataset.module;
+  var componentKey = 'component';
 
-    require([module], (m) => m(el));
+  var load = function(el) {
+    var dataset = $(el).data();
+    var component = dataset.component.trim();
+
+    if (_.isEmpty(component)) { return; }
+
+    // special module that exposes bootstrap data from the server
+    define('bootstrap', function() {
+      var bootstrap = {};
+
+      $.each(dataset, function(key, value) {
+        if (key != componentKey) {
+          bootstrap[key] = value;
+        }
+      });
+
+      return bootstrap;
+    });
+
+    require([`components/${component}`], function(Component) {
+    	React.renderComponent(Component(), el);
+    });
   };
 
-  $(() => _.map(load, $('[data-module]').toArray()));
+  $(function() {
+  	return _.map(load, $(`[data-${componentKey}]`).toArray());
+  });
 
 });

@@ -1,31 +1,35 @@
 /** @jsx React.DOM */
 
 define([
+  'ramda',
   'react-with-addons',
   'components/Icon',
   'components/Button',
-  'components/BranchList'
+  'components/BranchList',
+  'components/mixins/Bacon',
+  'stores/Watchlist'
 ],
 
-function(React, Icon, Button, BranchList) {
+function(_, React, Icon, Button, BranchList, BaconMixin, Watchlist) {
 
   'use strict';
 
   return React.createClass({
-    handleClick: function(event) {
-      var repo = {
-        id: this.props.id,
-        name: this.props.name,
-        owner: this.props.owner,
-        description: this.props.description,
-        branches: [] // todo
-      };
+    mixins: [BaconMixin],
 
-      this.props.store[this.props.store.isWatching(this.props) ? 'remove' : 'add'](repo);
+    getInitialState: function() {
+      return { saving: false };
+    },
+
+    componentWillMount: function() {
+      var click = this.eventStream('buttonClicked');
+      var result = click.flatMapLatest(_.compose(Bacon.fromPromise, _.lPartial(Watchlist.put, this.props)));
+
+      this.plug(click.awaiting(result), 'saving');
     },
 
     render: function() {
-      var alreadyWatching = this.props.store.isWatching(this.props);
+      var watching = Watchlist.isWatchingRepo(this.props);
 
       return (
         <div className="repo">
@@ -38,11 +42,11 @@ function(React, Icon, Button, BranchList) {
               <div className="repo-description">{this.props.description}</div>
             </div>
             <div className="repo-follow-status cell">
-              <Button onClick={this.handleClick} icon="eye" positive={alreadyWatching}>{alreadyWatching ? 'Unfollow' : 'Follow'}</Button>
+              <Button icon="eye" onClick={this.buttonClicked} disabled={this.state.saving}>{watching ? 'Unfollow' :'Follow'}</Button>
             </div>
           </div>
 
-          <BranchList repo={this.props} />
+          <BranchList repo={this.props} branches={this.props.branches} />
         </div>
       );
     }

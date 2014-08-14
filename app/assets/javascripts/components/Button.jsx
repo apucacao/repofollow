@@ -11,9 +11,9 @@ function(React, Icon) {
 
   return React.createClass({
     propTypes: {
-      positive: React.PropTypes.bool.isRequired,
-      icon: React.PropTypes.string,
-      onClick: React.PropTypes.func
+      onClick: React.PropTypes.func,
+      positive: React.PropTypes.bool,
+      icon: React.PropTypes.string
     },
 
     render: function() {

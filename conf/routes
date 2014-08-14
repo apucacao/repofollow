@@ -10,8 +10,8 @@ GET     /settings                     @controllers.Application.settings
 
 # API
 GET     /api/watchlist                @controllers.Api.getWatchlist
-POST    /api/watchlist                @controllers.Api.addToWatchlist
-DELETE  /api/watchlist/:id            @controllers.Api.removeFromWatchlist(id: Long)
+PUT     /api/watchlist/repos/:id      @controllers.Api.updateWatchlistItem(id: Long)
+DELETE  /api/watchlist/repos/:id      @controllers.Api.removeWatchlistItem(id: Long)
 
 # GitHub proxy
 GET     /github/search/repositories		controllers.GitHubProxy.searchRepositories

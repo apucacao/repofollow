@@ -1,24 +1,33 @@
 define([
   'ramda',
   'lib/xhr',
+  'Bacon',
+  'bootstrap'
 ],
 
-function(_, xhr) {
+function(_, xhr, Bacon, bootstrap) {
 
-  return function(initial) {
-    var data = initial;
+  return {
+    get: function() {
+      return bootstrap.watchlist
+    },
 
-    return {
-      list: () => data,
+    put: function(repo) {
+      return xhr.put(jsRoutes.controllers.Api.updateWatchlistItem(repo.id).url, repo);
+    },
 
-      add: xhr.post(jsRoutes.controllers.Api.addToWatchlist().url),
+    remove: function(repo) {
+      xhr.delete(jsRoutes.controllers.Api.removeWatchlistItem(repo.id).url);
+    },
 
-      remove: (repo) => xhr.delete(jsRoutes.controllers.Api.removeFromWatchlist(repo.id).url),
+    isWatchingRepo: function(repo) {
+      return _.any((r) => r.id === repo.id, this.get().repos);
+    },
 
-      isWatching: function(repo) {
-        return _.any((r) => r.id === repo.id, data);
-      }
-    };
+    isWatchingBranch: function(repo, branch) {
+      var watched = _.find((r) => r.id === repo.id, this.get().repos);
+      return watched && _.any((b) => b.sha === branch.sha, watched.branches);
+    }
   };
 
 });

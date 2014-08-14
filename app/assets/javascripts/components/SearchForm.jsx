@@ -2,27 +2,31 @@
 
 define([
   'react-with-addons',
-  'components/Icon'
+  'components/Icon',
+  'components/mixins/Bacon'
 ],
 
-function(React, Icon) {
+function(React, Icon, BaconMixin) {
 
   'use strict';
 
   return React.createClass({
-    handleSubmit: function(event) {
-      var value = (this.refs.q.state.value || '').trim();
+    mixins: [BaconMixin],
 
-      if (value) {
-        this.setState({ q: value }, () => this.props.stream.push(this.state));
-      }
-      
-      event.preventDefault();
+    propTypes: {
+      handleSearch: React.PropTypes.func.isRequired
+    },
+
+    componentWillMount: function() {
+      this.eventStream('formSubmit')
+          .map('.preventDefault')
+          .map(() => (this.refs.q.state.value || '').trim())
+          .onValue(this.props.handleSearch);
     },
 
     render: function() {
       return (
-        <form className="search-form row" onSubmit={this.handleSubmit}>
+        <form className="search-form row" onSubmit={this.formSubmit}>
           <input type="search" ref="q" placeholder="eg. jquery" autoFocus/>
           <button type="submit" className="btn"><Icon type="search" /> Search</button>
         </form>

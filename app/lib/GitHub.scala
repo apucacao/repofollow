@@ -20,7 +20,8 @@ object GitHub {
 
 	lazy val auth = Map(
 		"client_id" -> Play.current.configuration.getString("securesocial.github.clientId").get,
-		"client_secret" -> Play.current.configuration.getString("securesocial.github.clientSecret").get)
+		"client_secret" -> Play.current.configuration.getString("securesocial.github.clientSecret").get,
+		"per_page" -> "5")
 
 	implicit val BranchReads: Reads[Branch] = (
     (__ \ "commit" \ "sha").read[String] and
@@ -32,6 +33,7 @@ object GitHub {
 	def params(p: (String, String)*) = (auth ++ p.toMap).toSeq
 
 	// TODO: use cache and cond. requests using GitHub's ETag to reduce chance of getting rate-limited
+	// TODO: handle rate-limit errors
 	def searchRepositoriesWithBranches(q: String): Future[GitHubSearchResults] = {
 		def augment(r: Repository): Future[Repository] =
 			for {

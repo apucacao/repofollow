@@ -18,9 +18,7 @@ class Application(override implicit val env: RuntimeEnvironment[User]) extends S
   lazy val db = ReactiveMongoPlugin.db
 
   def index = UserAwareAction { implicit request =>
-    val firstTime = request.user.map(_.watchlist.isEmpty).getOrElse(true)
-
-    println(s"first time user: $firstTime")
+    val firstTime = request.user.map(_.isNotWatchingAnything).getOrElse(true)
 
     if (request.user.isDefined)
       Redirect(if (firstTime) routes.Application.setup() else routes.Application.settings())

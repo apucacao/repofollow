@@ -11,8 +11,8 @@ function(_, $) {
     return $.ajax({ type: 'GET', url: url, data: data, dataType: 'json' });
   }
 
-  var postJSON =  function(url, data) {
-    return $.ajax({ type: 'POST', url: url, data: JSON.stringify(data), dataType: 'json', processData: false, contentType: mimetype });
+  var putJSON =  function(url, data) {
+    return $.ajax({ type: 'PUT', url: url, data: JSON.stringify(data), dataType: 'json', processData: false, contentType: mimetype });
   };
 
   var del = function(url) {
@@ -21,7 +21,7 @@ function(_, $) {
 
   return {
     get: _.curry(getJSON),
-    post: _.curry(postJSON),
+    put: _.curry(putJSON),
     'delete': del
   };
 
