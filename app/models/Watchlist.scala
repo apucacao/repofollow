@@ -8,8 +8,7 @@ import play.api.libs.json._
 
 // Abstraction of a list of repos. Could grow into a broader abstractions, one that
 // includes users for example.
-case class Watchlist(
-	repos: List[Repository] = Nil) {
+case class Watchlist(repos: List[Repository] = Nil) {
 
 	def isEmpty = repos.isEmpty
 
@@ -31,7 +30,6 @@ case class Watchlist(
 
 	def drop(id: Long) =
 		copy(repos = repos.filter(_.id =/= id))
-
 }
 
 object Watchlist {
