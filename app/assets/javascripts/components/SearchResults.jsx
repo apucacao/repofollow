@@ -38,7 +38,7 @@ function(_, GitHub, React, Icon, RepositoryList, BaconMixin) {
 
     render: function() {
       if (_.isEmpty(this.props.q)) {
-        return <div />;
+        return null;
       } else if (this.state.loading) {
         return <div className="spinner" />;
       }
