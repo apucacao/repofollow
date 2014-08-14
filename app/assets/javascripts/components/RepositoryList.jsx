@@ -16,9 +16,12 @@ function(_, React, Repository) {
     },
 
     render: function() {
+      var repos = _.compose(_.map((repo) => Repository(_.mixin({ key: repo.id }, repo))),
+                            _.filter((repo) => repo.branches.length > 0));
+
       return (
         <div className="repos">
-          {_.map((repo) => Repository(_.mixin({ key: repo.id }, repo)), this.props.items)}
+          {repos(this.props.items)}
         </div>
       );
     }

@@ -46,9 +46,9 @@ function(_, GitHub, React, Icon, RepositoryList, BaconMixin) {
       return (
         <section className="search-results">
           <header>
-            <h3>Found {this.state.results.count} repositor{this.state.results.count !== 1 ? 'ies' : 'y'} on GitHub</h3>
+            <h3>{_.isEmpty(this.state.results.items) ? "We didn't find any repos." : `Found ${this.state.results.count} repositor${this.state.results.count !== 1 ? 'ies' : 'y'} on GitHub`}</h3>
           </header>
-          <RepositoryList items={this.state.results.items} />
+          {_.isEmpty(this.state.results.items) ? null : <RepositoryList items={this.state.results.items} />}
         </section>
       );
     }

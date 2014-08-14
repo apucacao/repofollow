@@ -20,11 +20,19 @@ function(_, React, Branch) {
     },
 
     render: function() {
+      var order = function(a, b) {
+        if (a.name === 'master' || b.name === 'master') {
+          return a.name === 'master' ? -1 : 1;
+        } else {
+          return a.name.localeCompare(b.name);
+        }
+      };
+
+      var branches = _.compose(_.map((branch) => Branch(_.mixin({ key: branch.sha, repo: this.props.repo }, branch))),
+                               _.sort(order));
       return (
         <div className="repo-branches">
-          <form>
-          {_.map((branch) => Branch(_.mixin({ key: branch.sha, repo: this.props.repo }, branch)), this.props.branches)}
-          </form>
+          {branches(this.props.branches)}
         </div>
       );
     }
