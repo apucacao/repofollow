@@ -41,8 +41,15 @@ function(_, React, Branch, BaconMixin) {
         }
       };
 
-      var branches = _.compose(_.map.idx((branch, i) => Branch(_.mixin({ key: branch.sha, repo: this.props.repo, onChange: (e) => this.changed([i, e]) }, branch))),
-                               _.sort(order));
+      var renderBranch = (branch, i) =>
+        Branch(_.mixin({
+          key: branch.sha,
+          repo: this.props.repo,
+          onChange: (e) => this.changed([i, e])
+      }, branch));
+
+      var branches = _.compose(_.map.idx(renderBranch), _.sort(order));
+
       return (
         <div className="repo-branches">
           {branches(this.props.branches)}
