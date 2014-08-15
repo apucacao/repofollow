@@ -14,7 +14,7 @@ function(_, React, Icon, Button, BranchList, BaconMixin, Watchlist) {
 
   'use strict';
 
-  return React.createClass({
+  var Repository = React.createClass({
     mixins: [BaconMixin],
 
     getInitialState: function() {
@@ -51,4 +51,7 @@ function(_, React, Icon, Button, BranchList, BaconMixin, Watchlist) {
       );
     }
   });
+
+  return Repository;
+
 });

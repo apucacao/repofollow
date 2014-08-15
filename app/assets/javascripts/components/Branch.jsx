@@ -10,7 +10,7 @@ function(React, Icon, Button) {
 
   'use strict';
 
-  return React.createClass({
+  var Branch = React.createClass({
     propTypes: {
       sha: React.PropTypes.string.isRequired,
       name: React.PropTypes.string.isRequired,
@@ -34,5 +34,7 @@ function(React, Icon, Button) {
   		);
   	}
   });
+
+  return Branch;
 
 });

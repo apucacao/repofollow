@@ -8,7 +8,7 @@ function(React) {
 
   'use strict';
 
-  return React.createClass({
+  var Icon = React.createClass({
     propTypes: {
       type: React.PropTypes.string.isRequired
     },
@@ -16,6 +16,8 @@ function(React) {
     render: function() {
       return <span className={`octicon octicon-${this.props.type}`} />;
     }
-  })
+  });
+
+  return Icon;
 
 });

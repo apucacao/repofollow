@@ -15,7 +15,7 @@ function(_, GitHub, React, Icon, RepositoryList, BaconMixin) {
 
   var notEmpty = _.not(_.isEmpty);
 
-  return React.createClass({
+  var SearchResults = React.createClass({
     mixins: [BaconMixin],
 
     propTypes: {
@@ -53,5 +53,7 @@ function(_, GitHub, React, Icon, RepositoryList, BaconMixin) {
       );
     }
   });
+
+  return SearchResults;
 
 });

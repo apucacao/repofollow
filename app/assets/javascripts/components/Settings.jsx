@@ -10,7 +10,7 @@ function(React, Watchlist, RepositoryList) {
 
   'use strict';
 
-  return React.createClass({
+  var Settings = React.createClass({
     getInitialState: function() {
       return { watchlist: Watchlist.get() };
     },
@@ -19,5 +19,7 @@ function(React, Watchlist, RepositoryList) {
       return <RepositoryList items={this.state.watchlist.repos} />;
     }
   });
+
+  return Settings;
 
 });

@@ -13,7 +13,7 @@ function(_, Bacon, React, Watchlist, SearchForm, SearchResults) {
 
   'use strict';
 
-  return React.createClass({
+  var Setup = React.createClass({
     getInitialState: function() {
       return { q : '' };
     },
@@ -32,5 +32,7 @@ function(_, Bacon, React, Watchlist, SearchForm, SearchResults) {
       );
     }
   });
+
+  return Setup;
 
 });

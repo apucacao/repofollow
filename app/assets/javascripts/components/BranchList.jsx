@@ -11,7 +11,7 @@ function(_, React, Branch, BaconMixin) {
 
   'use strict';
 
-  return React.createClass({
+  var BranchList = React.createClass({
     mixins: [BaconMixin],
 
     propTypes: {
@@ -50,5 +50,7 @@ function(_, React, Branch, BaconMixin) {
       );
     }
   });
+
+  return BranchList;
 
 });

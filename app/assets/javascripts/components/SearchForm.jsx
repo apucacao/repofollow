@@ -10,7 +10,7 @@ function(React, Icon, BaconMixin) {
 
   'use strict';
 
-  return React.createClass({
+  var SearchForm = React.createClass({
     mixins: [BaconMixin],
 
     propTypes: {
@@ -33,5 +33,7 @@ function(React, Icon, BaconMixin) {
       );
     }
   });
+
+  return SearchForm;
 
 });

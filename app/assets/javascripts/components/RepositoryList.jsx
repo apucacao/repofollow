@@ -10,7 +10,7 @@ function(_, React, Repository) {
 
   'use strict';
 
-  return React.createClass({
+  var RepositoryList = React.createClass({
     propTypes: {
       items: React.PropTypes.arrayOf(React.PropTypes.object).isRequired
     },
@@ -25,6 +25,8 @@ function(_, React, Repository) {
         </div>
       );
     }
-  })
+  });
+
+  return RepositoryList;
 
 });

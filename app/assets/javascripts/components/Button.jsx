@@ -9,7 +9,7 @@ function(React, Icon) {
 
   'use strict';
 
-  return React.createClass({
+  var Button = React.createClass({
     propTypes: {
       onClick: React.PropTypes.func,
       positive: React.PropTypes.bool,
@@ -30,6 +30,8 @@ function(React, Icon) {
 
       return <button className={classes} onClick={this.props.onClick} disabled={this.props.disabled}>{icon} {this.props.children}</button>;
     }
-  })
+  });
+
+  return Button;
 
 });
