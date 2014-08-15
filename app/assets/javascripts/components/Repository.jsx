@@ -23,7 +23,7 @@ function(_, React, Icon, Button, BranchList, BaconMixin, Watchlist) {
 
     componentWillMount: function() {
       var click = this.eventStream('buttonClicked');
-      var select = this.eventStream('select');
+      var select = this.eventStream('branchSelected');
       var result = click.flatMapLatest(_.compose(Bacon.fromPromise, _.lPartial(Watchlist.put, this.props)));
 
       this.plug(select.map(_.size), 'selectionSize');
@@ -46,7 +46,7 @@ function(_, React, Icon, Button, BranchList, BaconMixin, Watchlist) {
             </div>
           </div>
 
-          <BranchList repo={this.props} branches={this.props.branches} onSelection={this.select} />
+          <BranchList repo={this.props} branches={this.props.branches} onSelection={this.branchSelected} />
         </div>
       );
     }
