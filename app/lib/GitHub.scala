@@ -50,12 +50,18 @@ object GitHub {
     WS.url(url("/search/repositories"))
       .withHeaders("Accept" -> contentType)
       .withQueryString(params("q" -> q): _*)
-      .get().map(_.json.as[GitHubSearchResults])
+      .get().map { resp =>
+      	Logger.info(s"search repos rate limit: ${resp.header("X-RateLimit-Remaining").get}/${resp.header("X-RateLimit-Limit").get}")
+      	resp.json.as[GitHubSearchResults]
+      }
 
   def getRepositoryBranches(repo: Repository): Future[List[Branch]] =
   	WS.url(url(s"/repos/${repo.owner.login}/${repo.name}/branches"))
       .withHeaders("Accept" -> contentType)
       .withQueryString(params(): _*)
-      .get().map(_.json.asOpt[List[Branch]]).map(_.getOrElse(Nil))
+      .get().map { resp =>
+      	Logger.info(s"get branches for ${repo.owner.login}/${repo.name} rate limit: ${resp.header("X-RateLimit-Remaining").get}/${resp.header("X-RateLimit-Limit").get}")
+      	resp.json.asOpt[List[Branch]]
+      }.map(_.getOrElse(Nil))
 
 }
