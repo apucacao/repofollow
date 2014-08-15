@@ -14,13 +14,18 @@ function(React, Icon, Button) {
     propTypes: {
       sha: React.PropTypes.string.isRequired,
       name: React.PropTypes.string.isRequired,
-      repo: React.PropTypes.object.isRequired
+      repo: React.PropTypes.object.isRequired,
+      onChange: React.PropTypes.func.isRequired
+    },
+
+    handleChange: function(event) {
+      this.props.onChange(event.target.checked);
     },
 
   	render: function() {
   		return (
   			<li className="repo-branch">
-          <input type="checkbox" name="branches" value={this.props.sha} />
+          <input type="checkbox" name="branches" value={this.props.sha} onChange={this.handleChange} />
           <span className="repo-branch-name">
             <Icon type="git-branch" />
             <a href={`http://github.com/${this.props.repo.owner.login}/${this.props.repo.name}/commits/${this.props.sha}`} title={`View ${this.props.repo.owner.login}/${this.props.repo.name} at ${this.props.name} on Github`}>{this.props.name}</a>

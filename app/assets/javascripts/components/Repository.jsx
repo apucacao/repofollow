@@ -18,19 +18,19 @@ function(_, React, Icon, Button, BranchList, BaconMixin, Watchlist) {
     mixins: [BaconMixin],
 
     getInitialState: function() {
-      return { saving: false };
+      return { saving: false, selectionSize: 0 };
     },
 
     componentWillMount: function() {
       var click = this.eventStream('buttonClicked');
+      var select = this.eventStream('select');
       var result = click.flatMapLatest(_.compose(Bacon.fromPromise, _.lPartial(Watchlist.put, this.props)));
 
+      this.plug(select.map(_.size), 'selectionSize');
       this.plug(click.awaiting(result), 'saving');
     },
 
     render: function() {
-      var watching = Watchlist.isWatchingRepo(this.props);
-
       return (
         <div className="repo">
           <div className="row">
@@ -42,11 +42,11 @@ function(_, React, Icon, Button, BranchList, BaconMixin, Watchlist) {
               <div className="repo-description">{this.props.description}</div>
             </div>
             <div className="repo-follow-status cell">
-              <Button icon="eye" onClick={this.buttonClicked} disabled={this.state.saving}>{watching ? 'Unfollow' :'Follow'}</Button>
+              <Button icon="eye" onClick={this.buttonClicked} disabled={this.state.saving}>Follow {this.state.selectionSize ? 'branches' : ''}</Button>
             </div>
           </div>
 
-          <BranchList repo={this.props} branches={this.props.branches} />
+          <BranchList repo={this.props} branches={this.props.branches} onSelection={this.select} />
         </div>
       );
     }

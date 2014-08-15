@@ -3,20 +3,33 @@
 define([
   'ramda',
   'react-with-addons',
-  'components/Branch'
+  'components/Branch',
+  'components/mixins/Bacon'
 ],
 
-function(_, React, Branch) {
+function(_, React, Branch, BaconMixin) {
 
   'use strict';
 
   return React.createClass({
+    mixins: [BaconMixin],
+
     propTypes: {
-      branches: React.PropTypes.arrayOf(React.PropTypes.object).isRequired
+      branches: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
+      onSelection: React.PropTypes.func.isRequired
     },
 
-    handleChange: function(event) {
-      this.props.onChange({ sha: event.target.value, selected: event.target.checked });
+    componentWillMount: function() {
+      var changes = this.eventStream('changed').map((ie) => ({ branch: this.props.branches[ie[0]], selected: ie[1] }));
+      var selection = changes.scan([], function(st, change) {
+        if (change.selected) {
+          return _.append(change.branch, st);
+        } else {
+          return _.filter((b) => b.sha !== change.branch.sha, st);
+        }
+      });
+
+      selection.onValue(this.props.onSelection);
     },
 
     render: function() {
@@ -28,7 +41,7 @@ function(_, React, Branch) {
         }
       };
 
-      var branches = _.compose(_.map((branch) => Branch(_.mixin({ key: branch.sha, repo: this.props.repo }, branch))),
+      var branches = _.compose(_.map.idx((branch, i) => Branch(_.mixin({ key: branch.sha, repo: this.props.repo, onChange: (e) => this.changed([i, e]) }, branch))),
                                _.sort(order));
       return (
         <div className="repo-branches">
