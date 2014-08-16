@@ -29,7 +29,7 @@ function(_, React, Branch, BaconMixin) {
         }
       });
 
-      selection.onValue(this.props.onSelection);
+      selection.skip(1).onValue(this.props.onSelection);
     },
 
     render: function() {
