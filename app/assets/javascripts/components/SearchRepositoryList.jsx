@@ -3,10 +3,10 @@
 define([
   'ramda',
   'react-with-addons',
-  'components/Repository'
+  'components/SearchRepository'
 ],
 
-function(_, React, Repository) {
+function(_, React, SearchRepository) {
 
   'use strict';
 
@@ -16,7 +16,7 @@ function(_, React, Repository) {
     },
 
     render: function() {
-      var repos = _.map((repo) => Repository(_.mixin({ key: repo.id }, repo)));
+      var repos = _.map((repo) => SearchRepository(_.mixin({ key: repo.id }, repo)));
 
       return (
         <div className="repos">

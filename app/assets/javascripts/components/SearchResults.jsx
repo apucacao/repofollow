@@ -5,11 +5,11 @@ define([
   'stores/GitHub',
   'react-with-addons',
   'components/Icon',
-  'components/RepositoryList',
+  'components/SearchRepositoryList',
   'components/mixins/Bacon'
 ],
 
-function(_, GitHub, React, Icon, RepositoryList, BaconMixin) {
+function(_, GitHub, React, Icon, SearchRepositoryList, BaconMixin) {
 
   'use strict';
 
@@ -48,7 +48,7 @@ function(_, GitHub, React, Icon, RepositoryList, BaconMixin) {
           <header>
             <h3>{_.isEmpty(this.state.results.items) ? "We didn't find any repos." : `Found ${this.state.results.count} repositor${this.state.results.count !== 1 ? 'ies' : 'y'} on GitHub`}</h3>
           </header>
-          {_.isEmpty(this.state.results.items) ? null : <RepositoryList items={this.state.results.items} />}
+          {_.isEmpty(this.state.results.items) ? null : <SearchRepositoryList items={this.state.results.items} />}
         </section>
       );
     }
