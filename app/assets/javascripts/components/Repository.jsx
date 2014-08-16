@@ -24,7 +24,8 @@ function(_, React, Icon, Button, BranchList, BaconMixin, Watchlist) {
     componentWillMount: function() {
       var click = this.eventStream('buttonClicked');
       var select = this.eventStream('branchSelected');
-      var result = click.flatMapLatest(_.compose(Bacon.fromPromise, _.lPartial(Watchlist.put, this.props)));
+      var updatedRepo = select.map((branches) => _.mixin(this.props, { branches: branches })).skipDuplicates().toProperty(this.props);
+      var result = click.map(updatedRepo).flatMapLatest(_.compose(Bacon.fromPromise, Watchlist.put));
 
       this.plug(select.map(_.size), 'selectionSize');
       this.plug(click.awaiting(result), 'saving');
