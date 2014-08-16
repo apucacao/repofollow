@@ -4,10 +4,11 @@ define([
   'ramda',
   'react-with-addons',
   'components/Branch',
-  'components/mixins/Bacon'
+  'components/mixins/Bacon',
+  'stores/Watchlist'
 ],
 
-function(_, React, Branch, BaconMixin) {
+function(_, React, Branch, BaconMixin, Watchlist) {
 
   'use strict';
 
@@ -45,6 +46,7 @@ function(_, React, Branch, BaconMixin) {
         Branch(_.mixin({
           key: branch.sha,
           repo: this.props.repo,
+          preSelected: Watchlist.isWatchingBranch(this.props.repo, branch),
           onChange: (e) => this.changed([i, e])
       }, branch));
 
