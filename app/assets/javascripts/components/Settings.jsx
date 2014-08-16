@@ -16,7 +16,14 @@ function(React, Watchlist, RepositoryList) {
     },
 
     render: function() {
-      return <RepositoryList items={this.state.watchlist.repos} />;
+      var repoCount = this.state.watchlist.repos.length;
+
+      return (
+        <div>
+          <p>You're following {repoCount} repositor{repoCount !== 1 ? 'ies' : 'y'}.</p>
+          <RepositoryList items={this.state.watchlist.repos} />
+        </div>
+      );
     }
   });
 
