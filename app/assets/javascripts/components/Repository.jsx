@@ -18,20 +18,25 @@ function(_, React, Icon, Button, BranchList, BaconMixin, Watchlist) {
     mixins: [BaconMixin],
 
     getInitialState: function() {
-      return { saving: false, selectionSize: 0 };
+      return { saving: false, selectedBranches: [] };
     },
 
     componentWillMount: function() {
       var click = this.eventStream('buttonClicked');
       var select = this.eventStream('branchSelected');
-      var updatedRepo = select.map((branches) => _.mixin(this.props, { branches: branches })).skipDuplicates().toProperty(this.props);
-      var result = click.map(updatedRepo).flatMapLatest(_.compose(Bacon.fromPromise, Watchlist.put));
+      var result = click.map(() => _.mixin(this.props, { branches: this.state.selectedBranches }))
+                        .flatMapLatest(_.compose(Bacon.fromPromise, Watchlist.put));
 
-      this.plug(select.map(_.size), 'selectionSize');
+      this.plug(select, 'selectedBranches');
       this.plug(click.awaiting(result), 'saving');
     },
 
     render: function() {
+      var label = () => {
+        var size = this.state.selectedBranches.length;
+        return (size > 0) ? `Follow branch${size !== 1 ? 'es' : ''}` : 'Follow';
+      };
+
       return (
         <div className="repo">
           <div className="row">
@@ -43,7 +48,7 @@ function(_, React, Icon, Button, BranchList, BaconMixin, Watchlist) {
               <div className="repo-description">{this.props.description}</div>
             </div>
             <div className="repo-follow-status cell">
-              <Button icon="eye" onClick={this.buttonClicked} disabled={this.state.saving}>Follow {this.state.selectionSize ? 'branches' : ''}</Button>
+              <Button icon="eye" onClick={this.buttonClicked} disabled={this.state.saving}>{label()}</Button>
             </div>
           </div>
 
