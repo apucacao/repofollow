@@ -3,10 +3,10 @@
 define([
   'react-with-addons',
   'stores/Watchlist',
-  'components/RepositoryList'
+  'components/UserRepositoryList'
 ],
 
-function(React, Watchlist, RepositoryList) {
+function(React, Watchlist, UserRepositoryList) {
 
   'use strict';
 
@@ -21,7 +21,7 @@ function(React, Watchlist, RepositoryList) {
       return (
         <div>
           <p>You're following {repoCount} repositor{repoCount !== 1 ? 'ies' : 'y'}.</p>
-          <RepositoryList items={this.state.watchlist.repos} />
+          <UserRepositoryList items={this.state.watchlist.repos} />
         </div>
       );
     }
