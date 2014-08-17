@@ -5,7 +5,7 @@
   @if(user.watchlist.isEmpty) {
     <p>You're not following any repositories. <a href="@routes.Application.setup()" title="Setup">Find some on GitHub →</a>
   } else {
-    <section data-component="Settings" data-watchlist="@(Json.toJson(user.watchlist))" />
+    <div data-component="Settings" data-watchlist="@(Json.toJson(user.watchlist))" />
   }
 
 }
