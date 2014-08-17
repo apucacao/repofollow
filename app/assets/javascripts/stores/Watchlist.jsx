@@ -17,7 +17,7 @@ function(_, xhr, Bacon, bootstrap) {
     },
 
     remove: function(repo) {
-      xhr.delete(jsRoutes.controllers.Api.removeWatchlistItem(repo.id).url);
+      return () => xhr.delete(jsRoutes.controllers.Api.removeWatchlistItem(repo.id).url);
     },
 
     isWatchingRepo: function(repo) {

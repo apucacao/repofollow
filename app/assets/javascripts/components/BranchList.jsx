@@ -20,17 +20,16 @@ function(_, React, Branch, BaconMixin, Watchlist) {
       onSelection: React.PropTypes.func.isRequired
     },
 
-    componentWillMount: function() {
-      var changes = this.eventStream('changed').map((ie) => ({ branch: this.props.branches[ie[0]], selected: ie[1] }));
-      var selection = changes.scan([], function(st, change) {
-        if (change.selected) {
-          return _.append(change.branch, st);
-        } else {
-          return _.filter((b) => b.sha !== change.branch.sha, st);
-        }
-      });
+    getInitialState: function() {
+      return {
+        selectedBranches: _.filter((b) => Watchlist.isWatchingBranch(this.props.repo, b), this.props.branches)
+      };
+    },
 
-      selection.skip(1).onValue(this.props.onSelection);
+    handleChange: function(i, selected) {
+      var branch = this.props.branches[i];
+      var newSelection = selected ? _.append(branch, this.state.selectedBranches) : _.filter((b) => b.sha !== branch.sha, this.state.selectedBranches);
+      this.setState({ selectedBranches: newSelection }, () => this.props.onSelection(this.state.selectedBranches));
     },
 
     render: function() {
@@ -46,8 +45,8 @@ function(_, React, Branch, BaconMixin, Watchlist) {
         Branch(_.mixin({
           key: branch.sha,
           repo: this.props.repo,
-          preSelected: Watchlist.isWatchingBranch(this.props.repo, branch),
-          onChange: (e) => this.changed([i, e])
+          preSelected: !!_.find((b) => b.sha === branch.sha, this.state.selectedBranches),
+          onChange: this.handleChange.bind(this, i)
       }, branch));
 
       var branches = _.compose(_.map.idx(renderBranch), _.sort(order));

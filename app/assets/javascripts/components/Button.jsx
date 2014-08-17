@@ -12,16 +12,23 @@ function(React, Icon) {
   var Button = React.createClass({
     propTypes: {
       onClick: React.PropTypes.func,
-      positive: React.PropTypes.bool,
+      polarity: React.PropTypes.oneOf(['positive', 'neutral', 'negative']),
       disabled: React.PropTypes.bool,
       size: React.PropTypes.oneOf(['tiny', 'big']),
       icon: React.PropTypes.string
     },
 
+    getDefaultProps: function() {
+      return {
+        polarity: 'neutral'
+      };
+    },
+
     render: function() {
       var classes = React.addons.classSet({
         'btn': true,
-        'btn-positive': this.props.positive,
+        'btn-positive': this.props.polarity === 'positive',
+        'btn-negative': this.props.polarity === 'negative',
         'btn-tiny': this.props.size === 'tiny',
         'btn-big': this.props.size === 'big'
       });

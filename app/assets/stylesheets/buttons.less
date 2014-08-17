@@ -10,6 +10,10 @@
   cursor: pointer;
   text-align: center;
 
+  & + .btn {
+    margin-left: .5rem;
+  }
+
   &:focus {
     outline: none;
   }
@@ -75,4 +79,4 @@
 .btn             { .btn-variant(@neutral-color); }
 .btn-primary     { .btn-variant(@primary-color); }
 .btn-positive    { .btn-variant(@positive-color); }
-.btn-destructive { .btn-variant(@negative-color); }
+.btn-negative { .btn-variant(@negative-color); }

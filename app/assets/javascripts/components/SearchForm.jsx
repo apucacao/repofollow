@@ -27,7 +27,7 @@ function(React, Icon, BaconMixin) {
     render: function() {
       return (
         <form className="search-form row" onSubmit={this.formSubmit}>
-          <input type="search" ref="q" placeholder="eg. jquery" autoFocus/>
+          <input type="search" ref="q" placeholder="eg. jquery" autoFocus defaultValue={this.props.q} />
           <button type="submit" className="btn"><Icon type="search" /> Search</button>
         </form>
       );

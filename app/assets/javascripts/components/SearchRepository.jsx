@@ -14,11 +14,14 @@ function(_, React, Icon, Button, BranchList, BaconMixin, Watchlist) {
 
   'use strict';
 
-  var Repository = React.createClass({
+  var SearchRepository = React.createClass({
     mixins: [BaconMixin],
 
     getInitialState: function() {
-      return { saving: false, selectedBranches: [] };
+      return {
+        saving: false,
+        selectedBranches: []
+      };
     },
 
     componentWillMount: function() {
@@ -52,12 +55,12 @@ function(_, React, Icon, Button, BranchList, BaconMixin, Watchlist) {
             </div>
           </div>
 
-          <BranchList repo={this.props} branches={this.props.branches} onSelection={this.branchSelected} />
+          {this.props.branches.length ? <BranchList repo={this.props} branches={this.props.branches} onSelection={this.branchSelected} /> : null}
         </div>
       );
     }
   });
 
-  return Repository;
+  return SearchRepository;
 
 });

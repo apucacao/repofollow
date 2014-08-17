@@ -14,29 +14,36 @@ function(_, React, Icon, Button, BranchList, BaconMixin, Watchlist) {
 
   'use strict';
 
-  var Repository = React.createClass({
+  var UserRepository = React.createClass({
     mixins: [BaconMixin],
 
     getInitialState: function() {
-      return { saving: false, selectedBranches: [] };
+      return {
+        remove: false,
+        updating: false,
+        shouldUpdate: false,
+        updatedBranchList: this.props.branches
+      };
     },
 
     componentWillMount: function() {
-      var click = this.eventStream('buttonClicked');
       var select = this.eventStream('branchSelected');
-      var result = click.map(() => _.mixin(this.props, { branches: this.state.selectedBranches }))
-                        .flatMapLatest(_.compose(Bacon.fromPromise, Watchlist.put));
 
-      this.plug(select, 'selectedBranches');
-      this.plug(click.awaiting(result), 'saving');
+      var remove = this.eventStream('remove');
+      var removeResult = remove.flatMapLatest(_.compose(Bacon.fromPromise, Watchlist.remove(this.props)));
+
+      var update = this.eventStream('update');
+      var updateResult = update.map(() => _.mixin(this.props, { branches: this.state.updatedBranchList }))
+                               .flatMapLatest(_.compose(Bacon.fromPromise, Watchlist.put));
+
+      var differs = _.compose(_.not(_.isEmpty), _.differenceWith((a,b) => a.sha === b.sha, this.props.branches));
+      this.plug(select.map(differs), 'shouldUpdate');
+      this.plug(select, 'updatedBranchList');
+      this.plug(remove.awaiting(removeResult), 'remove');
+      this.plug(update.awaiting(updateResult), 'updating');
     },
 
     render: function() {
-      var label = () => {
-        var size = this.state.selectedBranches.length;
-        return (size > 0) ? `Follow branch${size !== 1 ? 'es' : ''}` : 'Follow';
-      };
-
       return (
         <div className="repo">
           <div className="row">
@@ -48,16 +55,17 @@ function(_, React, Icon, Button, BranchList, BaconMixin, Watchlist) {
               <div className="repo-description">{this.props.description}</div>
             </div>
             <div className="repo-follow-status cell">
-              <Button icon="eye" onClick={this.buttonClicked} disabled={this.state.saving}>{label()}</Button>
+              <Button onClick={this.remove} icon="eye" polarity="negative" disabled={this.state.remove}>Unfollow</Button>
+              {this.state.shouldUpdate ? <Button onClick={this.update} icon="eye" disabled={this.state.updating}>Update</Button> : null}
             </div>
           </div>
 
-          <BranchList repo={this.props} branches={this.props.branches} onSelection={this.branchSelected} />
+          {this.props.branches.length ? <BranchList repo={this.props} branches={this.props.branches} onSelection={this.branchSelected} /> : null}
         </div>
       );
     }
   });
 
-  return Repository;
+  return UserRepository;
 
 });

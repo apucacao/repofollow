@@ -23,7 +23,10 @@ function(_, GitHub, React, Icon, SearchRepositoryList, BaconMixin) {
     },
 
     getInitialState: function() {
-      return { results: [], loading: false };
+      return {
+        results: [],
+        loading: false
+      };
     },
 
     componentWillMount: function() {

@@ -10,7 +10,7 @@ function(_, React, SearchRepository) {
 
   'use strict';
 
-  var RepositoryList = React.createClass({
+  var SearchRepositoryList = React.createClass({
     propTypes: {
       items: React.PropTypes.arrayOf(React.PropTypes.object).isRequired
     },
@@ -26,6 +26,6 @@ function(_, React, SearchRepository) {
     }
   });
 
-  return RepositoryList;
+  return SearchRepositoryList;
 
 });

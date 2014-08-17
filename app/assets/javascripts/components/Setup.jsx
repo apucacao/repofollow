@@ -15,7 +15,7 @@ function(_, Bacon, React, Watchlist, SearchForm, SearchResults) {
 
   var Setup = React.createClass({
     getInitialState: function() {
-      return { q : '' };
+      return { q : 'monocle' };
     },
 
     onSearch: function(q) {
@@ -26,7 +26,7 @@ function(_, Bacon, React, Watchlist, SearchForm, SearchResults) {
       return (
         <div>
           <p>Find repos. Follow the ones you want to keep tabs on.</p>
-          <SearchForm handleSearch={this.onSearch} />
+          <SearchForm q={this.state.q} handleSearch={this.onSearch} />
           <SearchResults q={this.state.q} />
         </div>
       );
