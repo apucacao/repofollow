@@ -67,16 +67,19 @@ object GitHub {
       	resp.json.asOpt[List[Branch]]
       }.map(_.getOrElse(Nil))
 
-  def getRepositoryCommits(repo: Repository): Future[List[Commit]] =
+  def getRepositoryCommits(repo: Repository, sha: Option[CommitSha] = None): Future[List[Commit]] = {
+    val qs = sha.map(s => params("sha" -> s)).getOrElse(params())
+
   	WS.url(url(s"/repos/${repo.fullName}/commits"))
   		.withHeaders("Accept" -> contentType)
-  		.withQueryString(params(): _*)
+  		.withQueryString(qs: _*)
   		.get().map { resp =>
-  			Logger.info(s"get commits for ${repo.fullName} rate limit: ${resp.header("X-RateLimit-Remaining").get}/${resp.header("X-RateLimit-Limit").get}")
+  			Logger.info(s"get commits for ${repo.fullName}${sha.map("#" + _).getOrElse("")} rate limit: ${resp.header("X-RateLimit-Remaining").get}/${resp.header("X-RateLimit-Limit").get}")
   			resp.json.as[List[Commit]]
 			}
+  }
 
   def getEvents(repo: Repository, branch: Option[Branch] = None): Future[List[Event]] = {
-    getRepositoryCommits(repo).map(_.map(Event(_, repo, branch)))
+    getRepositoryCommits(repo, branch.map(_.sha)).map(_.map(Event(_, repo, branch)))
   }
 }

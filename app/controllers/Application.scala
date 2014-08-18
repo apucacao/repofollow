@@ -49,7 +49,7 @@ class Application(override implicit val env: RuntimeEnvironment[User]) extends S
     for {
       user <- UserStore.findById(db, request.user._id)
       repo <- user.flatMap(_.watchlist.repos.headOption).point[Future]
-      commits <- repo.traverse(GitHub.getEvents(_))
+      commits <- repo.traverse(r => GitHub.getEvents(r, r.branches.headOption))
       result = user.cata(some = u => Ok(views.html.stream(u, commits.getOrElse(Nil))),
                          none = NotFound)
     } yield result

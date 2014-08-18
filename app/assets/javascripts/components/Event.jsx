@@ -21,8 +21,11 @@ function(React, moment) {
 		        <div className="commit-meta">
 		          <a href={`http://github.com/${this.props.repo.owner}/${this.props.repo.name}/commits/${this.props.commit.sha}`} className="commit-sha"><span className="octicon octicon-git-commit"></span> <code>{this.props.commit.sha.slice(0, 7)}</code></a>
 		          {' '}<time dateTime={this.props.commit.date}>{ago}</time>
-		          {' '}by <a href={`http://github.com/${this.props.commit.committer.login}`} className="commit-author">{this.props.commit.committer.login}</a>
-		          {' '}to <a href={`http://github.com/${this.props.repo.owner}/${this.props.repo.name}`} title={`View ${this.props.repo.owner}/${this.props.repo.name} on Github`} target="_blank"><span className="repo-owner">{this.props.repo.owner}</span>/<span className="repo-name">{this.props.repo.name}</span></a>
+		          {' '}by{' '}<a href={`http://github.com/${this.props.commit.committer.login}`} className="commit-author">{this.props.commit.committer.login}</a>
+		          {' '}to{' '}
+		          <a href={`http://github.com/${this.props.repo.owner}/${this.props.repo.name}`} title={`View ${this.props.repo.owner}/${this.props.repo.name} on Github`} target="_blank">
+		          	<span className="repo-owner">{this.props.repo.owner}</span>/<span className="repo-name">{this.props.repo.name}</span>{this.props.branch ? `#${this.props.branch.name}` : null}
+		          </a>
 		        </div>
 		      </div>
 		    </article>
