@@ -19,7 +19,10 @@ case class Repository(
   name: String,
   owner: RepositoryOwner,
   description: Option[String] = None,
-  branches: List[Branch] = Nil)
+  branches: List[Branch] = Nil) {
+
+  val fullName = s"${owner.login}/$name"
+}
 
 object Repository {
   implicit val RepositoryOwnerFormat = Json.format[RepositoryOwner]

@@ -4,9 +4,12 @@ package lib
 import models._
 
 import scalaz._, Scalaz._
+import scalaz.contrib.nscala_time._
 
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
+
+import com.github.nscala_time.time.Imports._
 
 import play.api._
 import play.api.libs.ws._
@@ -56,12 +59,24 @@ object GitHub {
       }
 
   def getRepositoryBranches(repo: Repository): Future[List[Branch]] =
-  	WS.url(url(s"/repos/${repo.owner.login}/${repo.name}/branches"))
+  	WS.url(url(s"/repos/${repo.fullName}/branches"))
       .withHeaders("Accept" -> contentType)
       .withQueryString(params(): _*)
       .get().map { resp =>
-      	Logger.info(s"get branches for ${repo.owner.login}/${repo.name} rate limit: ${resp.header("X-RateLimit-Remaining").get}/${resp.header("X-RateLimit-Limit").get}")
+      	Logger.info(s"get branches for ${repo.fullName} rate limit: ${resp.header("X-RateLimit-Remaining").get}/${resp.header("X-RateLimit-Limit").get}")
       	resp.json.asOpt[List[Branch]]
       }.map(_.getOrElse(Nil))
 
+  def getRepositoryCommits(repo: Repository): Future[List[Commit]] =
+  	WS.url(url(s"/repos/${repo.fullName}/commits"))
+  		.withHeaders("Accept" -> contentType)
+  		.withQueryString(params(): _*)
+  		.get().map { resp =>
+  			Logger.info(s"get commits for ${repo.fullName} rate limit: ${resp.header("X-RateLimit-Remaining").get}/${resp.header("X-RateLimit-Limit").get}")
+  			resp.json.as[List[Commit]]
+			}
+
+  def getEvents(repo: Repository, branch: Option[Branch] = None): Future[List[Event]] = {
+    getRepositoryCommits(repo).map(_.map(Event(_, repo, branch)))
+  }
 }

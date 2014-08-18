@@ -16,6 +16,7 @@ libraryDependencies ++= Seq(
   cache,
   ws,
   "org.scalaz" %% "scalaz-core" % "7.1.0",
+  "org.typelevel" %% "scalaz-nscala-time" % "0.2",
   "com.github.nscala-time" %% "nscala-time" % "1.2.0",
   "org.reactivemongo" %% "play2-reactivemongo" % "0.10.5.akka23-SNAPSHOT",
   "ws.securesocial" %% "securesocial" % "master-SNAPSHOT",
@@ -25,7 +26,8 @@ libraryDependencies ++= Seq(
   "org.webjars" % "ramda" % "0.3.0",
   "org.webjars" % "baconjs" % "0.7.18",
   "org.webjars" % "react" % "0.11.1",
-  "org.webjars" % "jquery" % "2.1.1"
+  "org.webjars" % "jquery" % "2.1.1",
+  "org.webjars" % "momentjs" % "2.8.1-1"
 )
 
 includeFilter in (Assets, LessKeys.less) := "main.less"

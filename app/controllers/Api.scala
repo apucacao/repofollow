@@ -20,6 +20,10 @@ import securesocial.core._
 class Api(override implicit val env: RuntimeEnvironment[User]) extends SecureSocial[User] {
   lazy val db = ReactiveMongoPlugin.db
 
+  def getCommits = SecuredAction.async { implicit request =>
+    Future(NotImplemented)
+  }
+
   def getWatchlist = SecuredAction.async { implicit request =>
     Future(Ok(Json.toJson(request.user.watchlist)))
   }

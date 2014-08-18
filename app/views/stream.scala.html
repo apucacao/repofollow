@@ -1,8 +1,10 @@
-@(user: User)(implicit req: RequestHeader)
+@(user: User, latestEvents: List[Event])(implicit req: RequestHeader)
 
 @main(Some("Latest commits"))(Some(user)) {
 
-  <section class="commits">
+  <section data-component="Stream" data-events="@(Json.toJson(latestEvents))" />
+
+  <!--<section class="commits">
     <article class="commit row row-top">
       <a href="#" class="commit-authorship cell"><img src="http://placehold.it/44x44"></a>
       <div class="commit-details cell">
@@ -45,6 +47,6 @@
         </div>
       </div>
     </article>
-  </section>
+  </section>-->
 
 }

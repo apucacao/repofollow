@@ -9,6 +9,7 @@ GET     /stream                       @controllers.Application.stream
 GET     /settings                     @controllers.Application.settings
 
 # API
+# GET 		/api/commits 									@controllers.Api.getCommits
 GET     /api/watchlist                @controllers.Api.getWatchlist
 PUT     /api/watchlist/repos/:id      @controllers.Api.updateWatchlistItem(id: Long)
 DELETE  /api/watchlist/repos/:id      @controllers.Api.removeWatchlistItem(id: Long)
