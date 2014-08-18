@@ -79,7 +79,16 @@ object GitHub {
 			}
   }
 
-  def getEvents(repo: Repository, branch: Option[Branch] = None): Future[List[Event]] = {
-    getRepositoryCommits(repo, branch.map(_.sha)).map(_.map(Event(_, repo, branch)))
+  def getEvents(repo: Repository): Future[List[Event]] = {
+    def getRepoEvents =
+      getRepositoryCommits(repo).map(_.map(Event(_, repo)))
+
+    def getBranchEvents(b: Branch) =
+      getRepositoryCommits(repo, Some(b.sha)).map(_.map(Event(_, repo, Some(b))))
+
+    if (repo.branches.isEmpty)
+      getRepoEvents
+    else
+      repo.branches.traverse(getBranchEvents).map(_.flatten)
   }
 }

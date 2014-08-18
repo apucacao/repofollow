@@ -21,4 +21,7 @@ object Event {
   )((r: Repository) => (r.name, r.owner.login))
 
   implicit val EventFormat = Json.format[Event]
+
+  def eventDateSort = Order.orderBy((e: Event) => e.commit.date).reverseOrder
+  implicit def defaultCommitOrdering = eventDateSort.toScalaOrdering
 }
