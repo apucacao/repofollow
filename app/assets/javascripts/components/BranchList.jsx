@@ -4,17 +4,14 @@ define([
   'ramda',
   'react-with-addons',
   'components/Branch',
-  'components/mixins/Bacon',
   'stores/Watchlist'
 ],
 
-function(_, React, Branch, BaconMixin, Watchlist) {
+function(_, React, Branch, Watchlist) {
 
   'use strict';
 
   var BranchList = React.createClass({
-    mixins: [BaconMixin],
-
     propTypes: {
       branches: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
       onSelection: React.PropTypes.func.isRequired
