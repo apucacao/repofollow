@@ -20,7 +20,7 @@ function(React, Watchlist, UserRepositoryList) {
 
       return (
         <div>
-          <p>You're following {repoCount} repositor{repoCount !== 1 ? 'ies' : 'y'}.</p>
+          <p>You’re following {repoCount} repositor{repoCount !== 1 ? 'ies' : 'y'}.</p>
           {repoCount > 0 ? <UserRepositoryList items={this.state.watchlist.repos} /> : null}
         </div>
       );

@@ -30,14 +30,6 @@ function(_, React, Branch, Watchlist) {
     },
 
     render: function() {
-      var order = function(a, b) {
-        if (a.name === 'master' || b.name === 'master') {
-          return a.name === 'master' ? -1 : 1;
-        } else {
-          return a.name.localeCompare(b.name);
-        }
-      };
-
       var renderBranch = (branch, i) =>
         Branch(_.mixin({
           key: branch.sha,
@@ -46,7 +38,7 @@ function(_, React, Branch, Watchlist) {
           onChange: this.handleChange.bind(this, i)
       }, branch));
 
-      var branches = _.compose(_.map.idx(renderBranch), _.sort(order));
+      var branches = _.map.idx(renderBranch);
 
       return (
         <div className="repo-branches">
