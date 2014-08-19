@@ -15,7 +15,7 @@ object Branch {
 case class RepositoryOwner(login: String)
 
 case class Repository(
-  id: GithubRepositoryId,
+  id: GitHubRepositoryId,
   name: String,
   owner: RepositoryOwner,
   description: Option[String] = None,
@@ -30,7 +30,7 @@ object Repository {
   implicit val RepositoryWrites = Json.writes[Repository]
 
   implicit val RepositoryReads: Reads[Repository] = (
-    (__ \ "id").read[GithubRepositoryId] and
+    (__ \ "id").read[GitHubRepositoryId] and
     (__ \ "name").read[String] and
     (__ \ "owner").read[RepositoryOwner] and
     (__ \ "description").readNullable[String] and

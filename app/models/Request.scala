@@ -9,11 +9,11 @@ import play.api.libs.functional.syntax._
 
 import com.github.nscala_time.time.Imports._
 
-case class Request(
-	etag: String,
-  repoId: GithubRepositoryId,
-  branch: Option[CommitSha] = None)
+case class RequestId(repoId: GitHubRepositoryId, branch: Option[CommitSha])
+
+case class Request(_id: RequestId, etag: ETag)
 
 object Request {
-  implicit val EventFormat = Json.format[Request]
+	implicit val RequestIdFormat = Json.format[RequestId]
+  implicit val RequestFormat = Json.format[Request]
 }

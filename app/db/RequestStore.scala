@@ -14,21 +14,25 @@ import reactivemongo.api._, indexes._
 import play.modules.reactivemongo.json.collection.JSONCollection
 
 object RequestStore {
-	private[this] def collection(db: DefaultDB) = db.collection[JSONCollection]("requests")
+  import Request._
 
-	def ensureIndexes(db: DefaultDB): Future[Unit] = {
+  private[this] def collection(db: DefaultDB) = db.collection[JSONCollection]("requests")
+
+  def ensureIndexes(db: DefaultDB): Future[Unit] = {
     val indexes = collection(db).indexesManager
 
     for {
-      _ <- indexes.ensure(Index(key = List("repoId" -> IndexType.Ascending, "branch" -> IndexType.Ascending), unique = true))
+      _ <- indexes.ensure(Index(key = List("repoId" -> IndexType.Ascending, "branch" -> IndexType.Ascending), sparse = true, unique = true))
     } yield ()
   }
 
-  def find(db: DefaultDB, repoId: GithubRepositoryId, branch: Option[CommitSha] = None) =	{
-  	val query = Json.obj("repoId" -> repoId) ++ branch.map(b => Json.obj("branch" -> b)).getOrElse(Json.obj())
-  	collection(db).find(query).one[Request]
+  def findById(db: DefaultDB, requestId: RequestId) = {
+    collection(db).find(Json.obj("_id" -> requestId)).one[Request]
   }
 
-  def save(db: DefaultDB, request: Request): Future[Request] =
-  	collection(db).save(request).map(_ => request)
+  def save(db: DefaultDB, requestId: RequestId, etag: ETag): Future[Request] = {
+    val request = Request(requestId, etag)
+    collection(db).save(request).map(_ => request)
+  }
 }
+

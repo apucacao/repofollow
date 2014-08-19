@@ -2,6 +2,7 @@ package org.albatross.repofollow
 package lib
 
 import models._
+import db.RequestStore
 
 import scalaz._, Scalaz._
 import scalaz.contrib.nscala_time._
@@ -12,12 +13,15 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import com.github.nscala_time.time.Imports._
 
 import play.api._
+import play.api.http.Status._
 import play.api.libs.ws._
 import play.api.libs.json._
 import play.api.libs.functional.syntax._
 import play.api.Play.current
+import play.modules.reactivemongo._
 
 object GitHub {
+  lazy val db = ReactiveMongoPlugin.db
 
 	val contentType = "application/vnd.github.v3+json"
 
@@ -67,24 +71,37 @@ object GitHub {
       	resp.json.asOpt[List[Branch]]
       }.map(_.getOrElse(Nil))
 
-  def getRepositoryCommits(repo: Repository, sha: Option[CommitSha] = None): Future[List[Commit]] = {
+  def getRepositoryCommits(repo: Repository, sha: Option[CommitSha] = None): Future[Option[List[Commit]]] = {
     val qs = sha.map(s => params("sha" -> s)).getOrElse(params())
+    val requestId = RequestId(repo.id, sha)
 
-  	WS.url(url(s"/repos/${repo.fullName}/commits"))
-  		.withHeaders("Accept" -> contentType)
-  		.withQueryString(qs: _*)
-  		.get().map { resp =>
-  			Logger.info(s"get commits for ${repo.fullName}${sha.map("#" + _).getOrElse("")} rate limit: ${resp.header("X-RateLimit-Remaining").get}/${resp.header("X-RateLimit-Limit").get}")
-  			resp.json.as[List[Commit]]
-			}
+    def log(resp: WSResponse) =
+      Logger.info(s"${repo.fullName}${sha.map("#" + _).getOrElse("")} rate limit: ${resp.header("X-RateLimit-Remaining").get}/${resp.header("X-RateLimit-Limit").get}")
+
+  	def sendRequest(etag: Option[ETag]) = {
+      val headers = Map("Accept" -> contentType) ++ etag.map(t => Map("If-None-Match" -> t)).getOrElse(Map.empty)
+
+      WS.url(url(s"/repos/${repo.fullName}/commits"))
+    		.withHeaders(headers.toSeq: _*)
+    		.withQueryString(qs: _*)
+        .get()
+    }
+
+    for {
+      etag <- RequestStore.findById(db, requestId).map(_.map(_.etag))
+      response <- sendRequest(etag)
+      _ = log(response)
+      _ <- response.header("ETag").traverse(tag => RequestStore.save(db, requestId, tag))
+      result = if (response.status === NOT_MODIFIED) None else Some(response.json.as[List[Commit]])
+    } yield result
   }
 
-  def getEvents(repo: Repository): Future[List[Event]] = {
+  def getLatestEvents(repo: Repository): Future[List[Event]] = {
     def getRepoEvents =
-      getRepositoryCommits(repo).map(_.map(Event(_, repo)))
+      getRepositoryCommits(repo).map(_.cata(some = _.map(Event(_, repo)), none = Nil))
 
     def getBranchEvents(b: Branch) =
-      getRepositoryCommits(repo, Some(b.sha)).map(_.map(Event(_, repo, Some(b))))
+      getRepositoryCommits(repo, Some(b.sha)).map(_.cata(some = _.map(Event(_, repo, Some(b))), none = Nil))
 
     if (repo.branches.isEmpty)
       getRepoEvents
