@@ -25,7 +25,4 @@ object Commit {
 
   implicit val CommitUserFormat = Json.format[CommitUser]
   implicit val CommitFormat = Json.format[Commit]
-
-  def commitDateSort = Order.orderBy((c: Commit) => c.date).reverseOrder
-  implicit def defaultCommitOrdering = commitDateSort.toScalaOrdering
 }

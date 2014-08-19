@@ -86,7 +86,7 @@ object GitHub {
       	resp.json.asOpt[List[Branch]]
       }.map(_.getOrElse(Nil))
 
-  def getLatestEventsForUser(user: User, repo: Repository): Future[List[Event]] = {
+  def getLatestEventsForRepository(user: User, repo: Repository): Future[List[Event]] = {
     def getRepoEvents =
       getRepositoryCommits(repo).map(_.map(_.map(Event(user._id, _, repo.toSummary))))
 
@@ -98,6 +98,9 @@ object GitHub {
       _ <- events.traverse(EventStore.insert(db, _))
     } yield events.getOrElse(Nil)
   }
+
+  def getLatestEventsForUser(user: User): Future[List[Event]] =
+    user.watchlist.repos.map(GitHub.getLatestEventsForRepository(user, _)).sequence.map(_.flatten)
 
   private def getRepositoryCommits(repo: Repository, sha: Option[CommitSha] = None): Future[Option[List[Commit]]] = {
     val qs = sha.map(s => params("sha" -> s)).getOrElse(params())

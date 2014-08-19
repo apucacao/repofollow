@@ -3,6 +3,7 @@ import securesocial.core.RuntimeEnvironment
 import org.albatross.repofollow.models.User
 import org.albatross.repofollow.services.MongoUserService
 import org.albatross.repofollow.db._
+import org.albatross.repofollow.actors._
 
 import controllers.CustomRoutesService
 

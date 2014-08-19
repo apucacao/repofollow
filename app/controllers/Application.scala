@@ -3,6 +3,7 @@ package controllers
 import org.albatross.repofollow.models._
 import org.albatross.repofollow.db._
 import org.albatross.repofollow.lib._
+import org.albatross.repofollow.actors.GetLatestUserEvents
 
 import scalaz._, Scalaz._
 
@@ -46,13 +47,11 @@ class Application(override implicit val env: RuntimeEnvironment[User]) extends S
   def stream = SecuredAction.async { implicit request =>
     for {
       user <- UserStore.findById(db, request.user._id).orStopWith(NotFound)
-      events <- EventStore.findByUser(db, user._id)
-      // events <- user.watchlist.repos.map(GitHub.getLatestEventsForUser(user, _)).sequence.map(_.flatten)
-      // commits <- user.watchlist.repos.map(r => GitHub.getLatestEventsForUser(user, r)).map(_.map(_.sorted))
+      _ = GetLatestUserEvents(user)
+      events <- EventStore.findByUser(db, user._id).map(_.sorted)
       result = Ok(views.html.stream(user, events))
     } yield result
   }
-
 }
 
 class CustomRoutesService extends RoutesService.Default {
