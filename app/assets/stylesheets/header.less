@@ -1,12 +1,12 @@
 // header
 
 header[role="banner"] {
-  padding-top: @padding-base;
+  padding-top: @padding-base / 2;
 }
 
 header[role="banner"] .logo {
   font-weight: bold;
-  font-size: @font-size-base * 1.1;
+  font-size: @font-size-base * 1.2;
 
   a {
     color: @brand-color;
@@ -21,9 +21,13 @@ header[role="banner"] .user-avatar {
 }
 
 header[role="banner"] nav {
+  font-size: @font-size-base * 1.2;
+
   a {
     color: @text-color;
-    padding-left: @padding-base;
+    margin-left: @padding-base;
+    display: inline-block;
+    line-height: 32px;
   }
 
   a:hover,
