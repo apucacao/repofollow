@@ -10,16 +10,12 @@ import play.api.libs.functional.syntax._
 import com.github.nscala_time.time.Imports._
 
 case class Event(
+  userId: UserId,
   commit: Commit,
-  repo: Repository,
+  repo: RepositorySummary,
   branch: Option[Branch] = None)
 
 object Event {
-  implicit val RepositoryWrites: Writes[Repository] = (
-    (__ \ "name").write[String] and
-    (__ \ "owner").write[String]
-  )((r: Repository) => (r.name, r.owner.login))
-
   implicit val EventFormat = Json.format[Event]
 
   def eventDateSort = Order.orderBy((e: Event) => e.commit.date).reverseOrder

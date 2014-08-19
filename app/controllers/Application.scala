@@ -31,27 +31,25 @@ class Application(override implicit val env: RuntimeEnvironment[User]) extends S
 
   def setup = SecuredAction.async { implicit request =>
     for {
-      user <- UserStore.findById(db, request.user._id)
-      result = user.cata(some = u => Ok(views.html.setup(u)),
-                         none = NotFound)
+      user <- UserStore.findById(db, request.user._id).orStopWith(NotFound)
+      result = Ok(views.html.setup(user))
     } yield result
   }
 
   def settings = SecuredAction.async { implicit request =>
     for {
-      user <- UserStore.findById(db, request.user._id)
-      result = user.cata(some = u => Ok(views.html.settings(u)),
-                         none = NotFound)
+      user <- UserStore.findById(db, request.user._id).orStopWith(NotFound)
+      result = Ok(views.html.settings(user))
     } yield result
   }
 
   def stream = SecuredAction.async { implicit request =>
     for {
-      user <- UserStore.findById(db, request.user._id)
-      repo <- user.flatMap(_.watchlist.repos.headOption).point[Future]
-      commits <- repo.traverse(r => GitHub.getEvents(r)).map(_.map(_.sorted))
-      result = user.cata(some = u => Ok(views.html.stream(u, commits.getOrElse(Nil))),
-                         none = NotFound)
+      user <- UserStore.findById(db, request.user._id).orStopWith(NotFound)
+      events <- EventStore.findByUser(db, user._id)
+      // events <- user.watchlist.repos.map(GitHub.getLatestEventsForUser(user, _)).sequence.map(_.flatten)
+      // commits <- user.watchlist.repos.map(r => GitHub.getLatestEventsForUser(user, r)).map(_.map(_.sorted))
+      result = Ok(views.html.stream(user, events))
     } yield result
   }
 

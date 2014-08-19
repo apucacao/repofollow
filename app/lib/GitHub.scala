@@ -2,7 +2,7 @@ package org.albatross.repofollow
 package lib
 
 import models._
-import db.RequestStore
+import db.{RequestStore, EventStore}
 
 import scalaz._, Scalaz._
 import scalaz.contrib.nscala_time._
@@ -30,10 +30,25 @@ object GitHub {
 		"client_secret" -> Play.current.configuration.getString("securesocial.github.clientSecret").get,
 		"per_page" -> "5")
 
+  implicit val dateTimeReads = Reads.jodaDateReads("yyyy-MM-dd'T'HH:mm:ss'Z'")
+  implicit val dateTimeWrites = Writes.jodaDateWrites("yyyy-MM-dd'T'HH:mm:ss'Z'")
+
 	implicit val BranchReads: Reads[Branch] = (
     (__ \ "commit" \ "sha").read[String] and
     (__ \ "name").read[String]
   )(Branch.apply _)
+
+  implicit val CommitUserReads: Reads[CommitUser] = (
+      (__ \ "login").read[String] and
+      (__ \ "avatar_url").read[String]
+  )(CommitUser.apply _)
+
+  implicit val CommitReads: Reads[Commit] = (
+    (__ \ "sha").read[String] and
+    (__ \ "commit" \ "message").read[String] and
+    (__ \ "commit" \ "committer" \ "date").read[DateTime] and
+    (__ \ "committer").read[CommitUser]
+  )(Commit.apply _)
 
 	def url(path: String) = s"""https://api.github.com${if (path.startsWith("/")) path else ("/" + path)}"""
 
@@ -71,19 +86,32 @@ object GitHub {
       	resp.json.asOpt[List[Branch]]
       }.map(_.getOrElse(Nil))
 
-  def getRepositoryCommits(repo: Repository, sha: Option[CommitSha] = None): Future[Option[List[Commit]]] = {
+  def getLatestEventsForUser(user: User, repo: Repository): Future[List[Event]] = {
+    def getRepoEvents =
+      getRepositoryCommits(repo).map(_.map(_.map(Event(user._id, _, repo.toSummary))))
+
+    def getBranchEvents(b: Branch) =
+      getRepositoryCommits(repo, Some(b.sha)).map(_.map(_.map(Event(user._id, _, repo.toSummary, Some(b)))))
+
+    for {
+      events <- if (repo.branches.isEmpty) getRepoEvents else repo.branches.traverse(getBranchEvents).map(_.sequence.map(_.flatten))
+      _ <- events.traverse(EventStore.insert(db, _))
+    } yield events.getOrElse(Nil)
+  }
+
+  private def getRepositoryCommits(repo: Repository, sha: Option[CommitSha] = None): Future[Option[List[Commit]]] = {
     val qs = sha.map(s => params("sha" -> s)).getOrElse(params())
     val requestId = RequestId(repo.id, sha)
 
     def log(resp: WSResponse) =
       Logger.info(s"${repo.fullName}${sha.map("#" + _).getOrElse("")} rate limit: ${resp.header("X-RateLimit-Remaining").get}/${resp.header("X-RateLimit-Limit").get}")
 
-  	def sendRequest(etag: Option[ETag]) = {
+    def sendRequest(etag: Option[ETag]) = {
       val headers = Map("Accept" -> contentType) ++ etag.map(t => Map("If-None-Match" -> t)).getOrElse(Map.empty)
 
       WS.url(url(s"/repos/${repo.fullName}/commits"))
-    		.withHeaders(headers.toSeq: _*)
-    		.withQueryString(qs: _*)
+        .withHeaders(headers.toSeq: _*)
+        .withQueryString(qs: _*)
         .get()
     }
 
@@ -94,18 +122,5 @@ object GitHub {
       _ <- response.header("ETag").traverse(tag => RequestStore.save(db, requestId, tag))
       result = if (response.status === NOT_MODIFIED) None else Some(response.json.as[List[Commit]])
     } yield result
-  }
-
-  def getLatestEvents(repo: Repository): Future[List[Event]] = {
-    def getRepoEvents =
-      getRepositoryCommits(repo).map(_.cata(some = _.map(Event(_, repo)), none = Nil))
-
-    def getBranchEvents(b: Branch) =
-      getRepositoryCommits(repo, Some(b.sha)).map(_.cata(some = _.map(Event(_, repo, Some(b))), none = Nil))
-
-    if (repo.branches.isEmpty)
-      getRepoEvents
-    else
-      repo.branches.traverse(getBranchEvents).map(_.flatten)
   }
 }

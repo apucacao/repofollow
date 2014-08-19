@@ -10,6 +10,10 @@ import securesocial.core._
 
 case class UserId(providerId: String, userId: String)
 
+object UserId {
+  implicit val UserIdFormat = Json.format[UserId]
+}
+
 case class User(
   _id: UserId,
   firstName: Option[String],
@@ -58,6 +62,5 @@ object User {
   implicit val OAuth2InfoFormat = Json.format[OAuth2Info]
   implicit val PasswordInfoFormat = Json.format[PasswordInfo]
   implicit val AuthenticationMethodFormat = Json.format[AuthenticationMethod]
-  implicit val UserIdFormat = Json.format[UserId]
   implicit val UserFormat = Json.format[User]
 }

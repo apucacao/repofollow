@@ -30,6 +30,7 @@ object Global extends play.api.GlobalSettings {
     for {
       _ <- UserStore.ensureIndexes(db)
       _ <- RequestStore.ensureIndexes(db)
+      _ <- EventStore.ensureIndexes(db)
     } yield Logger.info("Ensured indexes")
   }
 

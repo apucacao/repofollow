@@ -23,21 +23,8 @@ object Commit {
   implicit val dateTimeReads = Reads.jodaDateReads("yyyy-MM-dd'T'HH:mm:ss'Z'")
   implicit val dateTimeWrites = Writes.jodaDateWrites("yyyy-MM-dd'T'HH:mm:ss'Z'")
 
-  implicit val CommitUserWrites = Json.writes[CommitUser]
-
-  implicit val CommitUserReads: Reads[CommitUser] = (
-      (__ \ "login").read[String] and
-      (__ \ "avatar_url").read[String]
-  )(CommitUser.apply _)
-
-  implicit val CommitWrites = Json.writes[Commit]
-
-  implicit val CommitReads: Reads[Commit] = (
-    (__ \ "sha").read[String] and
-    (__ \ "commit" \ "message").read[String] and
-    (__ \ "commit" \ "committer" \ "date").read[DateTime] and
-    (__ \ "committer").read[CommitUser]
-  )(Commit.apply _)
+  implicit val CommitUserFormat = Json.format[CommitUser]
+  implicit val CommitFormat = Json.format[Commit]
 
   def commitDateSort = Order.orderBy((c: Commit) => c.date).reverseOrder
   implicit def defaultCommitOrdering = commitDateSort.toScalaOrdering

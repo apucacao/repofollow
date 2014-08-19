@@ -22,7 +22,7 @@ object RequestStore {
     val indexes = collection(db).indexesManager
 
     for {
-      _ <- indexes.ensure(Index(key = List("repoId" -> IndexType.Ascending, "branch" -> IndexType.Ascending), sparse = true, unique = true))
+      _ <- indexes.ensure(Index(key = List("repoId" -> IndexType.Ascending, "branch" -> IndexType.Ascending), unique = true))
     } yield ()
   }
 

@@ -21,6 +21,8 @@ case class Repository(
   description: Option[String] = None,
   branches: List[Branch] = Nil) {
 
+  def toSummary = RepositorySummary(name, owner.login)
+
   val fullName = s"${owner.login}/$name"
 }
 
@@ -36,4 +38,10 @@ object Repository {
     (__ \ "description").readNullable[String] and
     (__ \ "branches").read[List[Branch]].orElse(Reads.pure(List.empty))
   )(Repository.apply _)
+}
+
+case class RepositorySummary(name: String, owner: String)
+
+object RepositorySummary {
+  implicit val RepositorySummaryFormat = Json.format[RepositorySummary]
 }
