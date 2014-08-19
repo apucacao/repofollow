@@ -48,7 +48,7 @@ class Application(override implicit val env: RuntimeEnvironment[User]) extends S
     for {
       user <- UserStore.findById(db, request.user._id).orStopWith(NotFound)
       _ = GetLatestUserEvents(user)
-      events <- EventStore.findByUser(db, user._id).map(_.sorted)
+      events <- EventStore.findByUser(db, user._id)
       result = Ok(views.html.stream(user, events))
     } yield result
   }

@@ -26,7 +26,7 @@ object EventStore {
   }
 
   def findByUser(db: DefaultDB, userId: UserId): Future[List[Event]] =
-    collection(db).find(Json.obj("userId" -> userId)).cursor[Event].collect[List]()
+    collection(db).find(Json.obj("userId" -> userId)).sort(Json.obj("commit.date" -> -1)).cursor[Event].collect[List]()
 
   def insert(db: DefaultDB, events: List[Event]) = {
     val enumerator = Enumerator.enumerate(events)
