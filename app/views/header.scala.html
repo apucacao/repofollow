@@ -7,7 +7,7 @@
   <nav>
     @if(user.avatarUrl.isDefined) {<img class="user-avatar" src="@(user.avatarUrl)">}
     <a href="@routes.Application.stream()" title="Home">
-      <span class="badge">5+</span>
+      <span data-component="UnseenBadge"></span>
       <span class="octicon octicon-home"></span>
     </a>
     <a href="@routes.Application.setup()" title="Setup"><span class="octicon octicon-search"></span></a>

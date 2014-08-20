@@ -43,4 +43,10 @@ class Api(override implicit val env: RuntimeEnvironment[User]) extends SecureSoc
       updated <- UserStore.save(db, user.removeFromWatchlist(id))
     } yield Ok(Json.toJson(updated.watchlist))
   }
+
+  def unseen = SecuredAction.async { implicit request =>
+    for {
+      user <- UserStore.findById(db, request.user._id).orStopWith(NotFound)
+    } yield if (user.unseenEventCount === 0) NotModified else Ok(Json.obj("count" -> user.unseenEventCount))
+  }
 }

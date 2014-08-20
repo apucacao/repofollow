@@ -2,7 +2,7 @@ package org.albatross.repofollow
 package lib
 
 import models._
-import db.{RequestStore, EventStore}
+import db._
 
 import scalaz._, Scalaz._
 import scalaz.contrib.nscala_time._
@@ -109,6 +109,7 @@ object GitHub {
   def getLatestEventsForUser(user: User): Future[List[Event]] = {
     for {
       events <- user.watchlist.repos.map(GitHub.getLatestEventsForRepository(user, _)).sequence.map(_.flatten)
+      _ <- if (!events.isEmpty) UserStore.save(db, user.hasNotSeen(events.size)) else Future(())
       _ = Logger.info(s"Got latest ${events.size} events for user with id ${user._id}")
     } yield events
   }

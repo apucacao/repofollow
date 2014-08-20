@@ -6,6 +6,7 @@
   <head>
     <title>@for(t <- title) { @t | } RepoFollow </title>
     @helper.javascriptRouter("jsRoutes")(
+      routes.javascript.Api.unseen,
       routes.javascript.Api.updateWatchlistItem,
       routes.javascript.Api.removeWatchlistItem,
       routes.javascript.GitHubProxy.searchRepositories

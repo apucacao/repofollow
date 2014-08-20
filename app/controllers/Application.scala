@@ -47,6 +47,7 @@ class Application(override implicit val env: RuntimeEnvironment[User]) extends S
   def stream = SecuredAction.async { implicit request =>
     for {
       user <- UserStore.findById(db, request.user._id).orStopWith(NotFound)
+      _ <- UserStore.save(db, user.hasSeenAll)
 
       // defer loading latest user events
       _ = GetLatestUserEvents(user)

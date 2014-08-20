@@ -30,9 +30,9 @@ class MongoUserService extends UserService[User] {
         oAuth2Info = profile.oAuth2Info.get)
 
     for {
-      user <- UserStore.findById(db, UserId(profile.providerId, profile.userId))
+      user  <- UserStore.findById(db, UserId(profile.providerId, profile.userId))
       saved <- user.cata(some = u => UserStore.save(db, updateFromProfile(u)),
-                     none = UserStore.save(db, User.fromBasicProfile(profile)))
+                         none = UserStore.save(db, User.fromBasicProfile(profile)))
     } yield saved
   }
 

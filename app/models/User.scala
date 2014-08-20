@@ -22,7 +22,8 @@ case class User(
   email: Option[String],
   avatarUrl: Option[String],
   oAuth2Info: OAuth2Info,
-  watchlist: Watchlist) {
+  watchlist: Watchlist,
+  unseenEventCount: Int = 0) {
 
   def isWatching(repo: Repository) = watchlist.contains(repo)
 
@@ -31,6 +32,10 @@ case class User(
   def saveToWatchlist(repo: Repository) = copy(watchlist = watchlist.put(repo))
 
   def removeFromWatchlist(id: Long) = copy(watchlist = watchlist.drop(id))
+
+  def hasNotSeen(count: Int) = copy(unseenEventCount = count)
+
+  def hasSeenAll = copy(unseenEventCount = 0)
 }
 
 object User {

@@ -18,26 +18,31 @@ function(_, $, React) {
 
     if (_.isEmpty(component)) { return; }
 
-    // special module that exposes bootstrap data from the server
-    define('bootstrap', function() {
-      var bootstrap = {};
-
-      $.each(dataset, function(key, value) {
-        if (key != componentKey) {
-          bootstrap[key] = value;
-        }
-      });
-
-      return bootstrap;
-    });
-
     require([`components/${component}`], function(Component) {
     	React.renderComponent(Component(), el);
     });
   };
 
   $(function() {
-  	return _.map(load, $(`[data-${componentKey}]`).toArray());
+    var $components = $(`[data-${componentKey}]`);
+
+    // special module that exposes bootstrap data from the server
+    define('bootstrap', function() {
+      var bootstrap = {};
+
+      $components.each(function(i, el) {
+        var dataset = $(el).data();
+        $.each(dataset, function(key, value) {
+          if (key != componentKey) {
+            bootstrap[key] = value;
+          }
+        });
+      });
+
+      return bootstrap;
+    });
+
+  	return _.map(load, $components.toArray());
   });
 
 });
