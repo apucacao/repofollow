@@ -7,17 +7,43 @@ define([
 
 function(_, xhr, Bacon, bootstrap) {
 
+  var updated = new Bacon.Bus();
+  var removed = new Bacon.Bus();
+  var modified = updated.merge(removed);
+
+  var data = bootstrap.watchlist;
+
   return {
+    updated: updated,
+
+    removed: removed,
+
+    modified: modified,
+
     get: function() {
-      return bootstrap.watchlist
+      return data;
     },
 
     put: function(repo) {
-      return xhr.put(jsRoutes.controllers.Api.updateWatchlistItem(repo.id).url, repo);
+      // return xhr.put(jsRoutes.controllers.Api.updateWatchlistItem(repo.id).url, repo);
+      var request = xhr.put(jsRoutes.controllers.Api.updateWatchlistItem(repo.id).url, repo);
+      request.then(function(resp) {
+        data = resp;
+        updated.push(data);
+      });
+      return request;
     },
 
     remove: function(repo) {
-      return () => xhr.delete(jsRoutes.controllers.Api.removeWatchlistItem(repo.id).url);
+      return function() {
+        // return () => xhr.delete(jsRoutes.controllers.Api.removeWatchlistItem(repo.id).url);
+        var request = xhr.delete(jsRoutes.controllers.Api.removeWatchlistItem(repo.id).url);
+        request.then(function(resp) {
+          data = resp;
+          removed.push(data);
+        });
+        return request;
+      };
     },
 
     isWatchingRepo: function(repo) {

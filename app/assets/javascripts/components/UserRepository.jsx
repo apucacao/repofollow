@@ -37,7 +37,8 @@ function(_, React, Icon, Button, BranchList, BaconMixin, Watchlist) {
                                .flatMapLatest(_.compose(Bacon.fromPromise, Watchlist.put));
 
       var differs = _.compose(_.not(_.isEmpty), _.differenceWith((a,b) => a.sha === b.sha, this.props.branches));
-      this.plug(select.map(differs), 'shouldUpdate');
+
+      this.plug(select.map(differs).map(true).merge(updateResult.map(false)), 'shouldUpdate');
       this.plug(select, 'updatedBranchList');
       this.plug(remove.awaiting(removeResult), 'remove');
       this.plug(update.awaiting(updateResult), 'updating');
