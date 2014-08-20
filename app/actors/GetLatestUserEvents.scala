@@ -21,7 +21,7 @@ object GetLatestUserEvents {
 	val actor = Akka.system.actorOf(Props[GetLatestUserEvents])
 
 	def apply(user: User) =
-		actor ! user
+		actor ! ForUser(user)
 }
 
 class GetLatestUserEvents extends Actor with ActorLogging {

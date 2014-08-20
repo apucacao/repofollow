@@ -9,11 +9,14 @@ import play.api.libs.functional.syntax._
 
 import com.github.nscala_time.time.Imports._
 
-case class RequestId(repoId: GitHubRepositoryId, branch: Option[CommitSha])
+case class RequestId(repoId: GitHubRepositoryId, branch: Option[Branch])
 
-case class Request(_id: RequestId, etag: ETag)
+case class Request(_id: RequestId, etag: ETag, lastModified: DateTime)
 
 object Request {
+	implicit val dateTimeReads = Reads.jodaDateReads("yyyy-MM-dd'T'HH:mm:ss'Z'")
+  implicit val dateTimeWrites = Writes.jodaDateWrites("yyyy-MM-dd'T'HH:mm:ss'Z'")
+
 	implicit val RequestIdFormat = Json.format[RequestId]
   implicit val RequestFormat = Json.format[Request]
 }

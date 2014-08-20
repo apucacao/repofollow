@@ -13,6 +13,8 @@ import play.api.libs.json._
 import reactivemongo.api._, indexes._
 import play.modules.reactivemongo.json.collection.JSONCollection
 
+import com.github.nscala_time.time.Imports._
+
 object RequestStore {
   import Request._
 
@@ -30,9 +32,7 @@ object RequestStore {
     collection(db).find(Json.obj("_id" -> requestId)).one[Request]
   }
 
-  def save(db: DefaultDB, requestId: RequestId, etag: ETag): Future[Request] = {
-    val request = Request(requestId, etag)
+  def save(db: DefaultDB, request: Request): Future[Request] = {
     collection(db).save(request).map(_ => request)
   }
 }
-

@@ -28,8 +28,6 @@ class Api(override implicit val env: RuntimeEnvironment[User]) extends SecureSoc
     Future(Ok(Json.toJson(request.user.watchlist)))
   }
 
-  // FIXME: user.get
-
   def updateWatchlistItem(id: Long) = SecuredAction.async(jsonBody[Repository]) { implicit request =>
     val repository = request.body
 

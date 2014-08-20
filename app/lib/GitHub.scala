@@ -54,6 +54,13 @@ object GitHub {
 
 	def params(p: (String, String)*) = (auth ++ p.toMap).toSeq
 
+  val fmt = org.joda.time.format.ISODateTimeFormat.dateTimeNoMillis();
+
+  val lastModifiedFormat = org.joda.time.format.DateTimeFormat.forPattern("EEE, dd MMM yyyy HH:mm:ss zzz")
+
+  def parseLastModified(response: WSResponse) =
+    response.header("Last-Modified").map(lastModifiedFormat.parseDateTime(_)).getOrElse(DateTime.now)
+
 	// TODO: use cache and cond. requests using GitHub's ETag to reduce chance of getting rate-limited
 	// TODO: handle rate-limit errors
 	def searchRepositoriesWithBranches(q: String): Future[GitHubSearchResults] = {
@@ -91,7 +98,7 @@ object GitHub {
       getRepositoryCommits(repo).map(_.map(_.map(Event(user._id, _, repo.toSummary))))
 
     def getBranchEvents(b: Branch) =
-      getRepositoryCommits(repo, Some(b.sha)).map(_.map(_.map(Event(user._id, _, repo.toSummary, Some(b)))))
+      getRepositoryCommits(repo, Some(b)).map(_.map(_.map(Event(user._id, _, repo.toSummary, Some(b)))))
 
     for {
       events <- if (repo.branches.isEmpty) getRepoEvents else repo.branches.traverse(getBranchEvents).map(_.sequence.map(_.flatten))
@@ -99,31 +106,38 @@ object GitHub {
     } yield events.getOrElse(Nil)
   }
 
-  def getLatestEventsForUser(user: User): Future[List[Event]] =
-    user.watchlist.repos.map(GitHub.getLatestEventsForRepository(user, _)).sequence.map(_.flatten)
+  def getLatestEventsForUser(user: User): Future[List[Event]] = {
+    for {
+      events <- user.watchlist.repos.map(GitHub.getLatestEventsForRepository(user, _)).sequence.map(_.flatten)
+      _ = Logger.info(s"Got latest ${events.size} events for user with id ${user._id}")
+    } yield events
+  }
 
-  private def getRepositoryCommits(repo: Repository, sha: Option[CommitSha] = None): Future[Option[List[Commit]]] = {
-    val qs = sha.map(s => params("sha" -> s)).getOrElse(params())
-    val requestId = RequestId(repo.id, sha)
+  def getRepositoryCommits(repo: Repository, branch: Option[Branch] = None): Future[Option[List[Commit]]] = {
+    val qs = branch.map(b => params("sha" -> b.name)).getOrElse(params())
+    val requestId = RequestId(repo.id, branch)
 
-    def log(resp: WSResponse) =
-      Logger.info(s"${repo.fullName}${sha.map("#" + _).getOrElse("")} rate limit: ${resp.header("X-RateLimit-Remaining").get}/${resp.header("X-RateLimit-Limit").get}")
-
-    def sendRequest(etag: Option[ETag]) = {
-      val headers = Map("Accept" -> contentType) ++ etag.map(t => Map("If-None-Match" -> t)).getOrElse(Map.empty)
+    def sendCommitRequest(etag: Option[ETag], since: Option[DateTime]) = {
+      val headers = Map("Accept" -> contentType) ++ etag.map(e => Map("If-None-Match" -> e)).getOrElse(Map.empty)
+      val sinceParam = since.map(s => Map("since" -> fmt.print(s))).getOrElse(Map.empty)
 
       WS.url(url(s"/repos/${repo.fullName}/commits"))
         .withHeaders(headers.toSeq: _*)
-        .withQueryString(qs: _*)
+        .withQueryString((qs ++ sinceParam.toSeq) : _*)
         .get()
     }
 
+    def modifyRequest(request: Request, response: WSResponse) = {
+      val results = response.json.as[List[Commit]]
+      request.copy(etag = response.header("ETag").get,
+                   lastModified = if (results.isEmpty) parseLastModified(response) else request.lastModified)
+    }
+
     for {
-      etag <- RequestStore.findById(db, requestId).map(_.map(_.etag))
-      response <- sendRequest(etag)
-      _ = log(response)
-      _ <- response.header("ETag").traverse(tag => RequestStore.save(db, requestId, tag))
-      result = if (response.status === NOT_MODIFIED) None else Some(response.json.as[List[Commit]])
-    } yield result
+      request <- RequestStore.findById(db, requestId)
+      response <- sendCommitRequest(request.map(_.etag), request.map(_.lastModified))
+      _ = Logger.info(s"HTTP ${response.status}: ${request.map(_.etag)} vs ${response.header("ETag")}")
+      _ <- RequestStore.save(db, request.map(modifyRequest(_, response)).getOrElse(Request(requestId, response.header("ETag").get, parseLastModified(response))))
+    } yield Some(response.json.as[List[Commit]])
   }
 }
