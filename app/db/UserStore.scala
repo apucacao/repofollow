@@ -27,8 +27,8 @@ object UserStore {
     } yield ()
   }
 
-  def first(db: DefaultDB): Future[Option[User]] =
-    collection(db).find(Json.obj()).one[User]
+  def findAll(db: DefaultDB): Future[List[User]] =
+    collection(db).find(Json.obj()).cursor[User].collect[List]()
 
   def findById(db: DefaultDB, userId: UserId): Future[Option[User]] =
     collection(db).find(Json.obj("_id" -> userId)).one[User]

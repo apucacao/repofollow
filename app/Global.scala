@@ -11,11 +11,16 @@ import scalaz._, Scalaz._
 
 import java.lang.reflect.Constructor
 import scala.collection.immutable.ListMap
+
+import scala.concurrent._
+import scala.concurrent.duration._
 import scala.concurrent.ExecutionContext.Implicits.global
 
 import play.api._
 import play.api.Play.current
 import play.modules.reactivemongo._
+import play.api.libs.concurrent.Akka
+import akka.actor._
 
 import securesocial.core._, providers._
 
@@ -23,6 +28,12 @@ object Global extends play.api.GlobalSettings {
 
   override def onStart(app: Application) {
     ensureIndexes()
+  }
+
+  def scheduleGettingLatestEvents = {
+    val frequency = Play.configuration.getInt("getLatestEvents.frequency").getOrElse(1).hours
+    val actor = Akka.system.actorOf(Props[GetLatestUserEvents], name = "GetLatestUserEvents")
+    Akka.system.scheduler.schedule(0.seconds, frequency, actor, ForAllUsers)
   }
 
   def ensureIndexes() = {

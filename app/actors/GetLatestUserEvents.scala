@@ -3,17 +3,18 @@ package actors
 
 import models.User
 import lib.GitHub
-import db.EventStore
+import db.{EventStore, UserStore}
 
 import scalaz._, Scalaz._
 
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 
+import play.api._
 import play.api.Play.current
+import play.api.libs.concurrent.Akka
 import play.modules.reactivemongo._
 
-import play.api.libs.concurrent.Akka
 import akka.actor._
 
 object GetLatestUserEvents {
@@ -23,13 +24,22 @@ object GetLatestUserEvents {
 		actor ! user
 }
 
-// class GetLatestUserEvents(out: ActorRef) extends Actor with ActorLogging {
 class GetLatestUserEvents extends Actor with ActorLogging {
+	lazy val db = ReactiveMongoPlugin.db
+
 	def receive = {
-		case user: User => getEventsFor(user)
+		case ForUser(user: User) => getEventsForUser(user)
+		case ForAllUsers => getEventsForAllUsers
 	}
 
-	def getEventsFor(user: User) = GitHub.getLatestEventsForUser(user)
+	def getEventsForUser(user: User) = GitHub.getLatestEventsForUser(user)
+
+	def getEventsForAllUsers =
+		for {
+			users <- UserStore.findAll(db)
+			events <- users.traverse(getEventsForUser).map(_.join)
+		} yield Logger.info(s"Got ${events.size} new events")
 }
 
-case class GetLatestUserEventsMessageForUser(user: User)
+case class ForAllUsers()
+case class ForUser(user: User)
