@@ -15,7 +15,7 @@ function(_, Bacon, React, Watchlist, SearchForm, SearchResults) {
 
   var Setup = React.createClass({
     getInitialState: function() {
-      return { q : 'headspace' };
+      return { q : '' };
     },
 
     onSearch: function(q) {
