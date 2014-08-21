@@ -141,7 +141,6 @@ object GitHub {
     for {
       request <- RequestStore.findById(db, requestId)
       response <- sendCommitRequest(request.map(_.lastModified))
-      _ = Logger.info(s"HTTP ${response.status}: ${request.map(_.lastModified.toDateTime(DateTimeZone.UTC))} vs ${parseLastModified(response)}")
       _ <- RequestStore.save(db, request.map(modifyRequest(_, response)).getOrElse(Request(requestId, parseLastModified(response))))
     } yield Some(response.json.as[List[Commit]])
   }
