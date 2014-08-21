@@ -18,9 +18,12 @@ function(_, React, Icon, Button, BranchList, BaconMixin, Watchlist) {
     mixins: [BaconMixin],
 
     getInitialState: function() {
+      var selectedBranches = _.filter((b) => Watchlist.isWatchingBranch(this.props, b), this.props.branches);
+
       return {
         saving: false,
-        selectedBranches: []
+        initiallySelectedBranches: selectedBranches,
+        selectedBranches: selectedBranches
       };
     },
 
@@ -35,13 +38,30 @@ function(_, React, Icon, Button, BranchList, BaconMixin, Watchlist) {
     },
 
     render: function() {
+      var inWatchlist = Watchlist.isWatchingRepo(this.props);
+
+      var classes = React.addons.classSet({
+        'repo': true,
+        'repo-is-followed': inWatchlist
+      });
+
       var label = () => {
         var size = this.state.selectedBranches.length;
-        return (size > 0) ? `Follow branch${size !== 1 ? 'es' : ''}` : 'Follow';
+        var differs = _.compose(_.not(_.isEmpty), _.differenceWith((a,b) => a.sha === b.sha));
+
+        if (inWatchlist && differs(this.state.selectedBranches, this.state.initiallySelectedBranches)) {
+          return 'Update';
+        } else if (inWatchlist) {
+          return 'Following';
+        } else if (size > 0) {
+          return `Follow branch${size !== 1 ? 'es' : ''}`;
+        } else {
+          return 'Follow';
+        }
       };
 
       return (
-        <div className="repo">
+        <div className={classes}>
           <div className="row">
             <div className="repo-title cell">
               <Icon type="repo" />
