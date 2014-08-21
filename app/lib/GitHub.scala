@@ -58,8 +58,15 @@ object GitHub {
 
   val lastModifiedFormat = org.joda.time.format.DateTimeFormat.forPattern("EEE, dd MMM yyyy HH:mm:ss zzz")
 
-  def parseLastModified(response: WSResponse) =
-    response.header("Last-Modified").map(lastModifiedFormat.parseDateTime(_)).getOrElse(DateTime.now)
+  def parseLastModified(response: WSResponse): DateTime =
+    // assume GitHub always sets a Last-Modified (hence the .get)
+    response.header("Last-Modified").map(lastModifiedFormat.parseDateTime(_)).get
+
+  def formatForLastModifiedHeader(d: DateTime) =
+    lastModifiedFormat.print(d.toDateTime(DateTimeZone.UTC))
+
+  def formatForISO8601(d: DateTime) =
+    fmt.print(d.toDateTime(DateTimeZone.UTC))
 
 	// TODO: use cache and cond. requests using GitHub's ETag to reduce chance of getting rate-limited
 	// TODO: handle rate-limit errors
@@ -110,7 +117,7 @@ object GitHub {
     for {
       events <- user.watchlist.repos.map(GitHub.getLatestEventsForRepository(user, _)).sequence.map(_.flatten)
       _ <- if (!events.isEmpty) UserStore.save(db, user.hasNotSeen(events.size)) else Future(())
-      _ = Logger.info(s"Got latest ${events.size} events for user with id ${user._id}")
+      _ = if (!events.isEmpty) Logger.info(s"Got latest ${events.size} events for user with id ${user._id}") else ()
     } yield events
   }
 
@@ -118,9 +125,9 @@ object GitHub {
     val qs = branch.map(b => params("sha" -> b.name)).getOrElse(params())
     val requestId = RequestId(repo.id, branch)
 
-    def sendCommitRequest(etag: Option[ETag], since: Option[DateTime]) = {
-      val headers = Map("Accept" -> contentType) ++ etag.map(e => Map("If-None-Match" -> e)).getOrElse(Map.empty)
-      val sinceParam = since.map(s => Map("since" -> fmt.print(s))).getOrElse(Map.empty)
+    def sendCommitRequest(since: Option[DateTime]) = {
+      val headers = Map("Accept" -> contentType) ++ since.map(s => Map("If-Modified-Since" -> formatForLastModifiedHeader(s))).getOrElse(Map.empty)
+      val sinceParam = since.map(s => Map("since" -> formatForISO8601(s))).getOrElse(Map.empty)
 
       WS.url(url(s"/repos/${repo.fullName}/commits"))
         .withHeaders(headers.toSeq: _*)
@@ -128,17 +135,14 @@ object GitHub {
         .get()
     }
 
-    def modifyRequest(request: Request, response: WSResponse) = {
-      val results = response.json.as[List[Commit]]
-      request.copy(etag = response.header("ETag").get,
-                   lastModified = if (results.isEmpty) parseLastModified(response) else request.lastModified)
-    }
+    def modifyRequest(request: Request, response: WSResponse) =
+      request.copy(lastModified = parseLastModified(response))
 
     for {
       request <- RequestStore.findById(db, requestId)
-      response <- sendCommitRequest(request.map(_.etag), request.map(_.lastModified))
-      _ = Logger.info(s"HTTP ${response.status}: ${request.map(_.etag)} vs ${response.header("ETag")}")
-      _ <- RequestStore.save(db, request.map(modifyRequest(_, response)).getOrElse(Request(requestId, response.header("ETag").get, parseLastModified(response))))
+      response <- sendCommitRequest(request.map(_.lastModified))
+      _ = Logger.info(s"HTTP ${response.status}: ${request.map(_.lastModified.toDateTime(DateTimeZone.UTC))} vs ${parseLastModified(response)}")
+      _ <- RequestStore.save(db, request.map(modifyRequest(_, response)).getOrElse(Request(requestId, parseLastModified(response))))
     } yield Some(response.json.as[List[Commit]])
   }
 }
