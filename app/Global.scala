@@ -32,7 +32,7 @@ object Global extends play.api.GlobalSettings {
   }
 
   def scheduleGettingLatestEvents() = {
-    val frequency = Play.configuration.getInt("getLatestEvents.frequency").getOrElse(15).minutes
+    val frequency = Play.configuration.getInt("getLatestEvents.frequency").getOrElse(5).minutes
     val actor = Akka.system.actorOf(Props[GetLatestUserEvents], name = "GetLatestUserEvents")
     Akka.system.scheduler.schedule(0.seconds, frequency, actor, ForAllUsers)
   }
