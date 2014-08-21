@@ -36,4 +36,8 @@ join and more commits are cached, storage requirements will go up. Explore ways 
 
 ## Additional features
 
+- It would be nice to be able to follow users
+- Beyond the repository description, there is little information about a repository. It would be nice to have an additional view to see more info about a repository. We could pull in the README if it is available for example.
+- It would be nice to filter commits by repository and branch
 - It would be nice to have the ability to dig into the context of a commit. This can be done on GitHub, but a quick view of related commits might be interesting
+- It would be nice to have a little chart to visualize the kind of repositories a user is following, to gain insight into what languages they are interested in
