@@ -21,7 +21,7 @@ function(React, xhr, SetIntervalMixin) {
 
 		checkUnseenCount: function() {
 			var request = xhr.get(jsRoutes.controllers.Api.unseen().url, {});
-			request.then((resp) => this.setState(resp));
+			request.then((resp) => resp && this.setState(resp));
 		},
 
 		render: function() {
