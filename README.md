@@ -34,6 +34,6 @@ I assume you're running on a Mac.
 join and more commits are cached, storage requirements will go up. Explore ways to reduce duplication
 - There are some very rough edges in the code at the moment, especially in the front end component code -- clean that up :)
 
-## Future features
+## Additional features
 
 - It would be nice to have the ability to dig into the context of a commit. This can be done on GitHub, but a quick view of related commits might be interesting
