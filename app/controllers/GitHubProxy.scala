@@ -15,11 +15,11 @@ import play.api.libs.json._
 // See https://developer.github.com/v3/#rate-limiting
 object GitHubProxy extends Controller {
 
-	def searchRepositories = Action.async { implicit request =>
+  def searchRepositories = Action.async { implicit request =>
     val q = request.queryString.get("q").flatMap(_.headOption)
 
     q.cata(
-  		some = GitHub.searchRepositoriesWithBranches(_).map(results => Ok(Json.toJson(results))),
+      some = GitHub.searchRepositoriesWithBranches(_).map(results => Ok(Json.toJson(results))),
       none = Future { BadRequest }
     )
   }

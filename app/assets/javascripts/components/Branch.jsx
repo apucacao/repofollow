@@ -23,17 +23,17 @@ function(React, Icon, Button) {
       this.props.onChange(event.target.checked);
     },
 
-  	render: function() {
-  		return (
-  			<li className="repo-branch">
+    render: function() {
+      return (
+        <li className="repo-branch">
           <input type="checkbox" name="branches" value={this.props.sha} defaultChecked={this.props.preSelected} onChange={this.handleChange} />
           <span className="repo-branch-name">
             <Icon type="git-branch" />
             <a href={`http://github.com/${this.props.repo.owner.login}/${this.props.repo.name}/commits/${this.props.sha}`} title={`View ${this.props.repo.owner.login}/${this.props.repo.name} at ${this.props.name} on Github`}>{this.props.name}</a>
           </span>
         </li>
-  		);
-  	}
+      );
+    }
   });
 
   return Branch;

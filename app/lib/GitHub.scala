@@ -23,17 +23,17 @@ import play.modules.reactivemongo._
 object GitHub {
   lazy val db = ReactiveMongoPlugin.db
 
-	val contentType = "application/vnd.github.v3+json"
+  val contentType = "application/vnd.github.v3+json"
 
-	lazy val auth = Map(
-		"client_id" -> Play.current.configuration.getString("securesocial.github.clientId").get,
-		"client_secret" -> Play.current.configuration.getString("securesocial.github.clientSecret").get,
-		"per_page" -> "5")
+  lazy val auth = Map(
+    "client_id" -> Play.current.configuration.getString("securesocial.github.clientId").get,
+    "client_secret" -> Play.current.configuration.getString("securesocial.github.clientSecret").get,
+    "per_page" -> "5")
 
   implicit val dateTimeReads = Reads.jodaDateReads("yyyy-MM-dd'T'HH:mm:ss'Z'")
   implicit val dateTimeWrites = Writes.jodaDateWrites("yyyy-MM-dd'T'HH:mm:ss'Z'")
 
-	implicit val BranchReads: Reads[Branch] = (
+  implicit val BranchReads: Reads[Branch] = (
     (__ \ "commit" \ "sha").read[String] and
     (__ \ "name").read[String]
   )(Branch.apply _)
@@ -50,9 +50,9 @@ object GitHub {
     (__ \ "committer").read[CommitUser]
   )(Commit.apply _)
 
-	def url(path: String) = s"""https://api.github.com${if (path.startsWith("/")) path else ("/" + path)}"""
+  def url(path: String) = s"""https://api.github.com${if (path.startsWith("/")) path else ("/" + path)}"""
 
-	def params(p: (String, String)*) = (auth ++ p.toMap).toSeq
+  def params(p: (String, String)*) = (auth ++ p.toMap).toSeq
 
   val fmt = org.joda.time.format.ISODateTimeFormat.dateTimeNoMillis();
 
@@ -68,36 +68,36 @@ object GitHub {
   def formatForISO8601(d: DateTime) =
     fmt.print(d.toDateTime(DateTimeZone.UTC))
 
-	// TODO: use cache and cond. requests using GitHub's ETag to reduce chance of getting rate-limited
-	// TODO: handle rate-limit errors
-	def searchRepositoriesWithBranches(q: String): Future[GitHubSearchResults] = {
-		def augment(r: Repository): Future[Repository] =
-			for {
-				branches <- getRepositoryBranches(r)
-			} yield r.copy(branches = branches)
+  // TODO: use cache and cond. requests using GitHub's ETag to reduce chance of getting rate-limited
+  // TODO: handle rate-limit errors
+  def searchRepositoriesWithBranches(q: String): Future[GitHubSearchResults] = {
+    def augment(r: Repository): Future[Repository] =
+      for {
+        branches <- getRepositoryBranches(r)
+      } yield r.copy(branches = branches)
 
-		for {
-			results <- searchRepositories(q)
-			reposWithBranches <- results.items.traverse(augment)
-		} yield results.copy(items = reposWithBranches)
-	}
+    for {
+      results <- searchRepositories(q)
+      reposWithBranches <- results.items.traverse(augment)
+    } yield results.copy(items = reposWithBranches)
+  }
 
-	def searchRepositories(q: String): Future[GitHubSearchResults] =
+  def searchRepositories(q: String): Future[GitHubSearchResults] =
     WS.url(url("/search/repositories"))
       .withHeaders("Accept" -> contentType)
       .withQueryString(params("q" -> q): _*)
       .get().map { resp =>
-      	Logger.info(s"search repos rate limit: ${resp.header("X-RateLimit-Remaining").get}/${resp.header("X-RateLimit-Limit").get}")
-      	resp.json.as[GitHubSearchResults]
+        Logger.info(s"search repos rate limit: ${resp.header("X-RateLimit-Remaining").get}/${resp.header("X-RateLimit-Limit").get}")
+        resp.json.as[GitHubSearchResults]
       }
 
   def getRepositoryBranches(repo: Repository): Future[List[Branch]] =
-  	WS.url(url(s"/repos/${repo.fullName}/branches"))
+    WS.url(url(s"/repos/${repo.fullName}/branches"))
       .withHeaders("Accept" -> contentType)
       .withQueryString(params(): _*)
       .get().map { resp =>
-      	Logger.info(s"get branches for ${repo.fullName} rate limit: ${resp.header("X-RateLimit-Remaining").get}/${resp.header("X-RateLimit-Limit").get}")
-      	resp.json.asOpt[List[Branch]]
+        Logger.info(s"get branches for ${repo.fullName} rate limit: ${resp.header("X-RateLimit-Remaining").get}/${resp.header("X-RateLimit-Limit").get}")
+        resp.json.asOpt[List[Branch]]
       }.map(_.getOrElse(Nil))
 
   def getLatestEventsForRepository(user: User, repo: Repository): Future[List[Event]] = {

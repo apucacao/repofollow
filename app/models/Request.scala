@@ -14,6 +14,6 @@ case class RequestId(repoId: GitHubRepositoryId, branch: Option[Branch])
 case class Request(_id: RequestId, lastModified: DateTime)
 
 object Request {
-	implicit val RequestIdFormat = Json.format[RequestId]
+  implicit val RequestIdFormat = Json.format[RequestId]
   implicit val RequestFormat = Json.format[Request]
 }

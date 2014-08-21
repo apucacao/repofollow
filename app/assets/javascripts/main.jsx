@@ -1,9 +1,9 @@
 /** @jsx React.DOM */
 
 require([
-	'ramda',
-	'jquery',
-	'react-with-addons'
+  'ramda',
+  'jquery',
+  'react-with-addons'
 ],
 
 function(_, $, React) {
@@ -19,7 +19,7 @@ function(_, $, React) {
     if (_.isEmpty(component)) { return; }
 
     require([`components/${component}`], function(Component) {
-    	React.renderComponent(Component(), el);
+      React.renderComponent(Component(), el);
     });
   };
 
@@ -42,7 +42,7 @@ function(_, $, React) {
       return bootstrap;
     });
 
-  	return _.map(load, $components.toArray());
+    return _.map(load, $components.toArray());
   });
 
 });

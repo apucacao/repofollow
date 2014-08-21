@@ -18,27 +18,27 @@ import play.modules.reactivemongo._
 import akka.actor._
 
 object GetLatestUserEvents {
-	val actor = Akka.system.actorOf(Props[GetLatestUserEvents])
+  val actor = Akka.system.actorOf(Props[GetLatestUserEvents])
 
-	def apply(user: User) =
-		actor ! ForUser(user)
+  def apply(user: User) =
+    actor ! ForUser(user)
 }
 
 class GetLatestUserEvents extends Actor with ActorLogging {
-	lazy val db = ReactiveMongoPlugin.db
+  lazy val db = ReactiveMongoPlugin.db
 
-	def receive = {
-		case ForUser(user: User) => getEventsForUser(user)
-		case ForAllUsers => getEventsForAllUsers
-	}
+  def receive = {
+    case ForUser(user: User) => getEventsForUser(user)
+    case ForAllUsers => getEventsForAllUsers
+  }
 
-	def getEventsForUser(user: User) = GitHub.getLatestEventsForUser(user)
+  def getEventsForUser(user: User) = GitHub.getLatestEventsForUser(user)
 
-	def getEventsForAllUsers =
-		for {
-			users <- UserStore.findAll(db)
-			events <- users.traverse(getEventsForUser).map(_.join)
-		} yield Logger.info(s"Got ${events.size} new events")
+  def getEventsForAllUsers =
+    for {
+      users <- UserStore.findAll(db)
+      events <- users.traverse(getEventsForUser).map(_.join)
+    } yield Logger.info(s"Got ${events.size} new events")
 }
 
 case class ForAllUsers()
