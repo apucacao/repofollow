@@ -27,8 +27,7 @@ object GitHub {
 
   lazy val auth = Map(
     "client_id" -> Play.current.configuration.getString("securesocial.github.clientId").get,
-    "client_secret" -> Play.current.configuration.getString("securesocial.github.clientSecret").get,
-    "per_page" -> "5")
+    "client_secret" -> Play.current.configuration.getString("securesocial.github.clientSecret").get)
 
   implicit val dateTimeReads = Reads.jodaDateReads("yyyy-MM-dd'T'HH:mm:ss'Z'")
   implicit val dateTimeWrites = Writes.jodaDateWrites("yyyy-MM-dd'T'HH:mm:ss'Z'")
