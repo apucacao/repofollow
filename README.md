@@ -10,7 +10,7 @@ I assume you're running on a Mac.
 `brew install scala`
 
 1. install the [Typesafe Activator](https://typesafe.com/activator) to run the app
-`brew install activator`
+`brew install typesafe-activator`
 
 1. install MongoDB
 `brew install mongo`
